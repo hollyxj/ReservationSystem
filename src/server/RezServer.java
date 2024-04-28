@@ -51,7 +51,7 @@ public class RezServer extends JFrame {
 		}
 		
 		createGUI(); // Create the server GUI
-        startServer(); // Start the server when the ChatServer is created
+        startServer(); // Start the server when the server is created
 	}
 	
 	private void createGUI() {
@@ -91,7 +91,7 @@ public class RezServer extends JFrame {
 	
 	public String getStartString() {
         // Print the formatted date, time, and time zone
-        String startString = "Chat server started at " + getDate();
+        String startString = "Reservation server started at " + getDate();
         System.out.println(startString);
        
         // Return the formatted date and time
@@ -100,7 +100,7 @@ public class RezServer extends JFrame {
 	}
 	
 	public void writeMessageToServer(String message) {
-		// Broadcast a message in the chat server
+		// Broadcast a message in the server GUI
 		SwingUtilities.invokeLater(() -> {
 			textArea.append(message+"\n");
 		});
@@ -208,6 +208,10 @@ public class RezServer extends JFrame {
 	                    // Broadcast encrypted message to all connected clients	
 	                    broadcastMessage(decryptedMessage, localClientNum);
 	                    
+	                    /// added
+	                    // Broadcast encrypted message to all connected clients	
+	                    writeMessageToServer(decryptedMessage);
+	                    
 					} catch (EOFException eof) {
 	                    System.out.println("Client " + localClientNum + " disconnected.");
 	                    writeMessageToServer("Client " + localClientNum + " disconnected.");
@@ -227,7 +231,7 @@ public class RezServer extends JFrame {
     
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(() -> {
-			RezServer server = new RezServer(); // Create an instance of ChatServer on the Event Dispatch Thread
+			RezServer server = new RezServer(); // Create an instance of Server on the Event Dispatch Thread
 		});
 	}	
 }

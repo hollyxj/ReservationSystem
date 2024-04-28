@@ -120,11 +120,11 @@ public class SignUp extends JPanel {
     	char[] passwordChars = this.passwordField.getPassword();
         String pwd = new String(passwordChars);
         
-        System.out.println("Submit button pressed.");
-        System.out.println("[Name]=" + name);
-        System.out.println("[Email]=" + email);
-        System.out.println("[Password]=" + pwd);
-        System.out.println();
+        String submittedStr =   "Submit button pressed.\n" 
+        					  + "[Name]=" + name + "\n"
+        					  + "[Email]=" + email + "\n"
+        					  + "[Password]=" + pwd + "\n";
+        System.out.println(submittedStr);
         
 //        ReservationsDB db = new ReservationsDB();
 //        db.createDB();
@@ -137,6 +137,8 @@ public class SignUp extends JPanel {
 //		}
 //        RezServer.addUserToDB(name, email, pwd);
 //        clearFields();
+        Driver d = new Driver();
+        d.sendMessageToServer("[From SignUp] = " + submittedStr);
     }
     
     public void clearFields() {
