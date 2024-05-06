@@ -21,6 +21,7 @@ import javax.crypto.NoSuchPaddingException;
 import javax.swing.*;
 
 import encryption.Encryption;
+import reservation.Communicator;
 
 import java.security.*;
 import java.sql.SQLException;
@@ -38,12 +39,11 @@ public class RezServer extends JFrame {
 	private int clientNum = 0;        // Create a HashMap with Integer keys and DataOutputStream values
     HashMap<Integer, DataOutputStream> clientMap = new HashMap<>();
     HashMap<Integer, Key> clientKeys = new HashMap<>();
+    
+    private static ReservationDB db = null;
 
-
-	public RezServer() {
-	
+	private RezServer() {
 		super("Server");
-
 		try {
 			privateKey = Encryption.readPrivateKey("keypairs/pkcs8_key");
 		} catch (Exception e) {
@@ -51,10 +51,15 @@ public class RezServer extends JFrame {
 			System.err.println("problem loading private key: " + e.getMessage());
 			System.exit(1);
 		}
-		
 		createGUI(); // Create the server GUI
         startServer(); // Start the server when the server is created
 	}
+	
+    public ReservationDB getDB() {
+		// Like the Public Constructor
+    	db = new ReservationDB();
+    	return db;
+    }
 	
 	private void createGUI() {
 		// Create the text area
@@ -101,12 +106,12 @@ public class RezServer extends JFrame {
         
 	}
 	
-	public void writeMessageToServer(String message) {
+	public void printMessageOnServerConsole(String message) {
 		// Broadcast a message in the server GUI
 		SwingUtilities.invokeLater(() -> {
 			textArea.append(message+"\n");
 		});
-		System.out.println("[writeMessageToServer]=\'"+message+"\'");		
+		System.out.println("[printMessageOnServerConsole]=\'"+message+"\'");		
 	}
 	
 	public void broadcastMessage(String message, int localClientNum) {
@@ -129,6 +134,8 @@ public class RezServer extends JFrame {
 	            
 	            // Encrypt message with AES key before broadcasting
 				try {
+					// @TODO Maybe we don't have to broadcast anything back to the communicator
+					// Might be useful later... time will tell...
 					String encryptedMessage = Encryption.encrypt(senderKey, msgToEncrypt);
 					outputStream.writeInt(localClientNum);
 		            outputStream.writeUTF(encryptedMessage);
@@ -150,15 +157,15 @@ public class RezServer extends JFrame {
             try {
                 ServerSocket serverSocket = new ServerSocket(PORT); // Listen on port 9898
                 
-                writeMessageToServer(getStartString() + "\nListening on port 9898...");
+                printMessageOnServerConsole(getStartString() + "\nListening on port 9898...");
 
                 while (true) {
                     Socket socket = serverSocket.accept(); // Accept incoming connections
                 	this.clientNum++;
 
-                    writeMessageToServer("Starting thread for client "+this.clientNum+" at "+getDate());
-                    writeMessageToServer("Client "+this.clientNum+"'s host name is "+socket.getInetAddress().getHostName());
-                    writeMessageToServer("Client "+this.clientNum+"'s IP Address is "+socket.getInetAddress());
+                    printMessageOnServerConsole("Starting thread for client "+this.clientNum+" at "+getDate());
+                    printMessageOnServerConsole("Client "+this.clientNum+"'s host name is "+socket.getInetAddress().getHostName());
+                    printMessageOnServerConsole("Client "+this.clientNum+"'s IP Address is "+socket.getInetAddress());
                     
                     handleClient(socket);
                 }
@@ -210,13 +217,16 @@ public class RezServer extends JFrame {
 	                    // Broadcast encrypted message to all connected clients	
 	                    broadcastMessage(decryptedMessage, localClientNum);
 	                    
-	                    /// added
 	                    // Broadcast encrypted message to all connected clients	
-	                    writeMessageToServer(decryptedMessage);
+	                    printMessageOnServerConsole(decryptedMessage);
+	                    
+	                    // Process/Decode the message
+	                    String command = decryptedMessage;
+	                    processMessageFromCommunicator(command);
 	                    
 					} catch (EOFException eof) {
 	                    System.out.println("Client " + localClientNum + " disconnected.");
-	                    writeMessageToServer("Client " + localClientNum + " disconnected.");
+	                    printMessageOnServerConsole("Client " + localClientNum + " disconnected.");
 	                    
 						return;
 					} catch (IOException | InvalidAlgorithmParameterException | NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
@@ -231,6 +241,39 @@ public class RezServer extends JFrame {
         }
     }
     
+    private void processMessageFromCommunicator(String cmd) {
+		System.out.println("In processMessageFromCommunicator");
+		System.out.println("[cmd]="+cmd);
+
+
+    	ReservationDB db = getDB();
+    	
+    	String[] parts = cmd.split(",");
+    	String function = parts[0];
+    	
+    	try { 
+    		switch (function) {
+	    		case "addUser": 
+	    			System.out.println("In case addUser");
+
+	    			String name = parts[1];
+	    			String email = parts[2];
+	    			String pwd = parts[3];
+	    			// Send to DB
+	    			db.addUserToDB(name, email, pwd);
+	    			break;
+    		
+	    		default:
+	    			System.out.println("[processMessageFromCommunicator]: Unrecognized command \'" + cmd + "\'");
+	    			break;
+    			
+    		} // end Switch
+    		
+    	} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
     
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(() -> {

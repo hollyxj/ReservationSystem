@@ -102,6 +102,7 @@ public class MainFrame extends JFrame {
         setSize(400, 300);
         setLocationRelativeTo(null);
         setVisible(true);
+        setAlwaysOnTop(true);
     }
     
     private void switchToSignIn() {

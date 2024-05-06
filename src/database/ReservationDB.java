@@ -5,10 +5,12 @@ public class ReservationDB {
 	private Connection connection = null;
 	
 	public ReservationDB() {
-		
+		System.out.println("In rez db constructor");
+
+		createDB();
 	}
 	
-	public void addUser(String username, String email, String password) throws SQLException {
+	public void addUserToDB(String username, String email, String password) throws SQLException {
 	    PreparedStatement pstmt = connection.prepareStatement("insert into users (username, email, password) values (?, ?, ?)");
 	    pstmt.setString(1, username);
 	    pstmt.setString(2, email);
@@ -19,6 +21,7 @@ public class ReservationDB {
 
 	
 	public void createDB() {
+		System.out.println("In create DB!");
 		this.connection = null;
 		Statement statement = null;
 		try {

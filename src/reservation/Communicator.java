@@ -54,6 +54,19 @@ public class Communicator {
     	}
     	return mycommunicator;
     }
+    
+	public void addUser(String name, String email, String pwd) {
+		System.out.println("Formatting string.\n");
+        String submittedStr = "addUser," // action called by Server
+        					  +  name + ","
+        					  +  email + ","
+        					  +  pwd + "\n";
+        System.out.println("[addUser]="+submittedStr);
+        
+        sendMessageToServer(submittedStr);
+        // add the user to the Database
+	}
+	
 
     public void sendMessageToServer(String msg) {
     	// Send the message to the server

@@ -92,7 +92,7 @@ public class SignUp extends JPanel {
         submitButton.addActionListener(e -> {
         	 try {
 				handleSubmitButton();
-			} catch (SQLException e1) {
+			} catch (Exception e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
@@ -114,17 +114,19 @@ public class SignUp extends JPanel {
         return this;
     }
     
-    private void handleSubmitButton() throws SQLException {
+    private void handleSubmitButton() {
     	String name = this.nameField.getText();
     	String email = this.emailField.getText();
     	char[] passwordChars = this.passwordField.getPassword();
         String pwd = new String(passwordChars);
         
-        String submittedStr =   "Submit button pressed.\n" 
-        					  + "[Name]=" + name + "\n"
-        					  + "[Email]=" + email + "\n"
-        					  + "[Password]=" + pwd + "\n";
-        System.out.println(submittedStr);
+        System.out.println("Submit button pressed.\n");
+        // Send info the server
+
+        Communicator c = Communicator.getCommunicator();
+        c.addUser(name,email,pwd);
+        clearFields();
+
         
 //        ReservationsDB db = new ReservationsDB();
 //        db.createDB();
@@ -136,17 +138,10 @@ public class SignUp extends JPanel {
 //			e.printStackTrace();
 //		}
 //        RezServer.addUserToDB(name, email, pwd);
-//        clearFields();
         
-        
-        Communicator c = Communicator.getCommunicator();
-        c.sendMessageToServer("[From SignUp] = " + submittedStr);
-        clearFields();
+       
     }
     
-    public static void getDriver(MainFrame d) {
-    	
-    }
     
     public void clearFields() {
     	this.nameField.setText("");
