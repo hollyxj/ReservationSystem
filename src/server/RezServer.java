@@ -1,5 +1,6 @@
 // Holly Jordan
 package server;
+import database.*;
 
 import java.awt.BorderLayout;
 import java.io.DataInputStream;
@@ -22,6 +23,7 @@ import javax.swing.*;
 import encryption.Encryption;
 
 import java.security.*;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -228,6 +230,7 @@ public class RezServer extends JFrame {
             e.printStackTrace();
         }
     }
+    
     
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(() -> {

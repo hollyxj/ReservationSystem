@@ -18,7 +18,7 @@ import java.util.Date;
 //import org.jdatepicker.*;
 //import org.jdatepicker.JDatePicker;
 //import org.jdatepicker.UtilDateModel;
-import javafx.scene.control.DatePicker;
+//import javafx.scene.control.DatePicker;
 
 public class SignUp extends JPanel {
 	
@@ -137,8 +137,15 @@ public class SignUp extends JPanel {
 //		}
 //        RezServer.addUserToDB(name, email, pwd);
 //        clearFields();
-        Driver d = new Driver();
-        d.sendMessageToServer("[From SignUp] = " + submittedStr);
+        
+        
+        Communicator c = Communicator.getCommunicator();
+        c.sendMessageToServer("[From SignUp] = " + submittedStr);
+        clearFields();
+    }
+    
+    public static void getDriver(MainFrame d) {
+    	
     }
     
     public void clearFields() {

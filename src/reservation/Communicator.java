@@ -1,9 +1,6 @@
+// Communicates between MainFrame and RezServer
 package reservation;
-import server.*;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Container;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.EOFException;
@@ -20,19 +17,11 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import encryption.Encryption;
 
-public class Driver extends JFrame {
-    private static final long serialVersionUID = 1L;
-    
+public class Communicator {
     private static final String RSA = "RSA";
 	private static final String SERVER_PUBLIC_KEY = "MIGeMA0GCSqGSIb3DQEBAQUAA4GMADCBiAKBgGk9wUQ4G9PChyL5SUkCyuHjTNOglEy5h4KEi0xpgjxi/UbIH27NXLXOr94JP1N5pa1BbaVSxlvpuCDF0jF9jlZw5IbBg1OW2R1zUACK+NrUIAYHWtagG7KB/YcyNXHOZ6Icv2lXXd7MbIao3ShrUVXo3u+5BJFCEibd8a/JD/KpAgMBAAE=";
 	private PublicKey serverPublicKey;
@@ -46,15 +35,9 @@ public class Driver extends JFrame {
 	private static final int RETRY_LIMIT = 10;
 	private static final int SLEEP_TIME = 1000;
 	private static String DOT = "\u2022";
-
-	
-	private SignUp signUpPage;
-	private SignIn signInPage;
-    private Welcome welcomePage;
-    private ScheduleAppointment schedulePage;
+    private static Communicator mycommunicator = null;
     
-    public Driver() {
-        super("Driver");
+    private Communicator() {
         try {
 			serverPublicKey = Encryption.readPublicKey(SERVER_PUBLIC_KEY);
 			connectToServer();
@@ -62,69 +45,16 @@ public class Driver extends JFrame {
 			e.printStackTrace();
 			System.err.println("error getting server public key: " + e.getMessage());
 		}
-		createGUI();
     }
     
-    private void createGUI() {
-    	this.signUpPage = new SignUp();
-        this.signInPage = new SignIn();
-        this.welcomePage = new Welcome();
-        this.schedulePage = new ScheduleAppointment();
-
-        // Initialize the Sign In page as the initial view
-        setContentPane(this.welcomePage);
-
-        // Create menu items
-        JMenuItem welcomeItem = new JMenuItem("Welcome");
-        JMenuItem signUpItem = new JMenuItem("Sign Up");
-        JMenuItem signInItem = new JMenuItem("Sign In");
-        JMenuItem scheduleItem = new JMenuItem("Schedule Appointment");
-        JMenuItem exitItem = new JMenuItem("Exit");
-
-        // Implement menu functionality
-        signUpItem.addActionListener(e -> {
-        	// Sign in page
-        	switchToSignUp();
-            this.signUpPage.setSavedState((JPanel) getContentPane());
-        });
-        signInItem.addActionListener(e -> {
-        	// Sign in page
-        	switchToSignIn();
-            this.signInPage.setSavedState((JPanel) getContentPane());
-        });
-        welcomeItem.addActionListener(e -> {
-        	// Welcome page
-        	switchToWelcome();
-        	this.welcomePage.setSavedState((JPanel) getContentPane());
-        });
-        scheduleItem.addActionListener(e -> {
-        	// Schedul appointment page
-        	switchToScheduleAppointment();
-        	this.schedulePage.setSavedState((JPanel) getContentPane());
-
-        });
-        exitItem.addActionListener(e -> System.exit(0)); // Exit the application
-        
-        
-        // Create menu bar
-        JMenuBar menuBar = new JMenuBar();
-        JMenu menu = new JMenu("Menu");
-        menu.add(welcomeItem);
-        menu.add(signUpItem);
-        menu.add(signInItem);
-        menu.add(scheduleItem);
-        menu.addSeparator();
-        menu.add(exitItem);
-        menuBar.add(menu);
-        setJMenuBar(menuBar);
-
-        // Set frame properties
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(400, 300);
-        setLocationRelativeTo(null);
-        setVisible(true);
+    public static Communicator getCommunicator() {
+    	// Like the Public Constructor
+    	if (mycommunicator == null) {
+    		mycommunicator = new Communicator();
+    	}
+    	return mycommunicator;
     }
-    
+
     public void sendMessageToServer(String msg) {
     	// Send the message to the server
     	DataOutputStream outStream = getHandshakeOutputStream();
@@ -141,30 +71,6 @@ public class Driver extends JFrame {
 		}
     }
 
-    private void switchToSignIn() {
-        setContentPane(this.signInPage.getSavedState());
-        validate();
-        repaint();
-    }
-    
-    private void switchToSignUp() {
-        setContentPane(this.signUpPage.getSavedState());
-        validate();
-        repaint();
-    }
-    
-    private void switchToWelcome() {
-        setContentPane(this.welcomePage.getSavedState());
-        validate();
-        repaint();
-    }
-
-    private void switchToScheduleAppointment() {
-        setContentPane(this.schedulePage.getSavedState());
-        validate();
-        repaint();
-    }
-    
     private void connectToServer() {
         try {
             Socket socket = new Socket(SERVER_ADDRESS, SERVER_PORT);
@@ -295,9 +201,4 @@ public class Driver extends JFrame {
 	}
 	
     
-    
-    
-    public static void main(String[] args) {
-    	new Driver();
-    }
 }

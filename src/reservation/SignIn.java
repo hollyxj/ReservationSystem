@@ -97,6 +97,7 @@ public class SignIn extends JPanel {
         String pwd = new String(passwordChars);
         System.out.println("[Password]=" + pwd);
         System.out.println();
+        
     }
     
     public void clearFields() {
