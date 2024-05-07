@@ -67,6 +67,16 @@ public class Communicator {
         // add the user to the Database
 	}
 	
+	public void authenticate(String email, String pwd) {
+		System.out.println("Formatting string.\n");
+        String submittedStr = "authenticate," // action called by Server
+        					  +  email + ","
+        					  +  pwd + "\n";
+        System.out.println("[authenticate]="+submittedStr);
+        
+        sendMessageToServer(submittedStr);
+	}
+	
 
     public void sendMessageToServer(String msg) {
     	// Send the message to the server
@@ -133,8 +143,11 @@ public class Communicator {
 						// Decrypt message here
 						Key key = getCommunicationKey();
 //						System.out.println("key used for decryption: "+key);
-						String decryptedMessage = Encryption.decrypt(key, msgFromServer);
-						System.out.println("decrypted string is: " + decryptedMessage);
+						String status = Encryption.decrypt(key, msgFromServer);
+						System.out.println("status from server is: " + status);
+						
+    					MainFrame.sendJDialogue(status);
+
 						
 //		                SwingUtilities.invokeLater(() -> { textArea.append(decryptedMessage + "\n"); });
 					} catch (IllegalArgumentException e) {

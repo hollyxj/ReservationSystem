@@ -126,20 +126,6 @@ public class SignUp extends JPanel {
         Communicator c = Communicator.getCommunicator();
         c.addUser(name,email,pwd);
         clearFields();
-
-        
-//        ReservationsDB db = new ReservationsDB();
-//        db.createDB();
-//        try {
-//			db.addUser(name, email, pwd);
-//	        clearFields();
-//		} catch (SQLException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//        RezServer.addUserToDB(name, email, pwd);
-        
-       
     }
     
     

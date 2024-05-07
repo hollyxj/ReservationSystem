@@ -10,7 +10,7 @@ import java.awt.event.*;
 public class SignIn extends JPanel {
 	
 	private static final long serialVersionUID = 1L;
-	private JTextField nameOrEmailField = new JTextField(25);
+	private JTextField emailField = new JTextField(25);
 	private JPasswordField passwordField = new JPasswordField(15);
 	private JCheckBox showPasswordCheckbox = new JCheckBox();
 	private JPanel savedState;
@@ -22,11 +22,11 @@ public class SignIn extends JPanel {
 	}
 	
     public JPanel initGUI() {
-        JLabel nameOrEmailLabel = new JLabel("Name or email:");
+        JLabel nameOrEmailLabel = new JLabel("Enter user email:");
         JLabel passwordLabel = new JLabel("Password:");
 
-        this.nameOrEmailField.setEditable(true);
-        this.nameOrEmailField.setPreferredSize(new Dimension(200,20));
+        this.emailField.setEditable(true);
+        this.emailField.setPreferredSize(new Dimension(200,20));
         this.passwordField.setEditable(true);
         this.showPasswordCheckbox = new JCheckBox();
 
@@ -35,10 +35,10 @@ public class SignIn extends JPanel {
         panel.setLayout(new GridLayout(7, 1));
 
         panel.add(nameOrEmailLabel); // 1
-        panel.add(this.nameOrEmailField); // 2
+        panel.add(this.emailField); // 2
 
         // Press the "Tab" key to go to the next field functionality
-        this.nameOrEmailField.addKeyListener(new KeyListener() {
+        this.emailField.addKeyListener(new KeyListener() {
             JTextField nmOrEmlField = getNameOrEmailField();
 
             @Override
@@ -91,17 +91,22 @@ public class SignIn extends JPanel {
     }
     
     private void handleSubmitButton() {
-        System.out.println("Submit button pressed.");
-        System.out.println("[Name or Email]=" + this.nameOrEmailField.getText());
+        System.out.println("Sign in Submit button pressed.");
+        String email = this.emailField.getText();
         char[] passwordChars = this.passwordField.getPassword();
         String pwd = new String(passwordChars);
+        
+        System.out.println("[Email]=" + email);
         System.out.println("[Password]=" + pwd);
         System.out.println();
-        
+
+        Communicator c = Communicator.getCommunicator();
+        c.authenticate(email,pwd);
+        clearFields();
     }
     
     public void clearFields() {
-    	this.nameOrEmailField.setText("");
+    	this.emailField.setText("");
     	this.passwordField.setText("");
     }
     
@@ -114,7 +119,7 @@ public class SignIn extends JPanel {
     }
 
 	public JTextField getNameOrEmailField() {
-		return this.nameOrEmailField;
+		return this.emailField;
 	}
 	
 	public JPasswordField getPasswordField() {

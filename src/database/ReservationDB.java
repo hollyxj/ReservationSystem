@@ -1,5 +1,6 @@
 package database;
 import java.sql.*;
+import encryption.*;
 
 public class ReservationDB {
 	private Connection connection = null;
@@ -17,6 +18,19 @@ public class ReservationDB {
 	    pstmt.setString(3, password);
 	    
 	    pstmt.executeUpdate();
+	}
+	
+	public String getEncryptedPasswordFromDB(String email) throws SQLException {
+	    PreparedStatement pstmt = connection.prepareStatement("select password from users where email=?");
+	    pstmt.setString(1, email);
+        ResultSet resultSet = pstmt.executeQuery();
+
+        if (resultSet.next()) {
+            String hashedPassword = resultSet.getString("password");
+    	    // return encrypted password
+    	    return hashedPassword;
+        } 
+        return null;
 	}
 
 	

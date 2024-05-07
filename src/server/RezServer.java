@@ -1,6 +1,7 @@
 // Holly Jordan
 package server;
 import database.*;
+import encryption.*;
 
 import java.awt.BorderLayout;
 import java.io.DataInputStream;
@@ -20,8 +21,8 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.swing.*;
 
-import encryption.Encryption;
 import reservation.Communicator;
+import reservation.MainFrame;
 
 import java.security.*;
 import java.sql.SQLException;
@@ -40,7 +41,7 @@ public class RezServer extends JFrame {
     HashMap<Integer, DataOutputStream> clientMap = new HashMap<>();
     HashMap<Integer, Key> clientKeys = new HashMap<>();
     
-    private static ReservationDB db = null;
+    private ReservationDB db = null;
 
 	private RezServer() {
 		super("Server");
@@ -57,8 +58,10 @@ public class RezServer extends JFrame {
 	
     public ReservationDB getDB() {
 		// Like the Public Constructor
-    	db = new ReservationDB();
-    	return db;
+    	if (this.db == null) {
+    		this.db = new ReservationDB();
+    	}
+    	return this.db;
     }
 	
 	private void createGUI() {
@@ -126,7 +129,7 @@ public class RezServer extends JFrame {
 
 	            String msgToEncrypt;
 	            if (localClientNum == clientNum) {
-	            	msgToEncrypt = "You: " + message;
+	            	msgToEncrypt = message;
 	            }
 	            else {
 	            	msgToEncrypt = localClientNum + ": "+ message;
@@ -250,18 +253,58 @@ public class RezServer extends JFrame {
     	
     	String[] parts = cmd.split(",");
     	String function = parts[0];
+    	String status = null;
+    	
+    	String name = null;
+    	String email = null;
+    	String pwd = null;
+    	String encryptedPwd = null;
+    	String decryptedPwd = null;
     	
     	try { 
     		switch (function) {
 	    		case "addUser": 
 	    			System.out.println("In case addUser");
 
-	    			String name = parts[1];
-	    			String email = parts[2];
-	    			String pwd = parts[3];
+	    			name = parts[1];
+	    			email = parts[2];
+	    			pwd = parts[3];    		
+	    			
+	    			encryptedPwd = PKCS5.encrypt(pwd);
 	    			// Send to DB
-	    			db.addUserToDB(name, email, pwd);
+	    			db.addUserToDB(name, email, encryptedPwd); // send encrypted password
+	    			System.out.println("[encryptedPwd]="+encryptedPwd);
+
 	    			break;
+	    			
+	    		case "authenticate":
+	    			System.out.println("In case authenticate");
+	    			email = parts[1];
+	    			pwd = parts[2];
+	    			encryptedPwd = db.getEncryptedPasswordFromDB(email);
+	    			System.out.println("[encryptedPwd]="+encryptedPwd);
+
+	    			decryptedPwd = PKCS5.decrypt(encryptedPwd, pwd);
+	    			System.out.println("[decryptedPwd]="+decryptedPwd);
+	    			System.out.println("[pwd]="+pwd);
+
+	    			
+    				if (decryptedPwd.equals(pwd)) {
+    					// Good
+    					
+    					status = "Login Successful";
+    					System.out.println(status);
+    					broadcastMessage(status,getClientNum());
+
+    				} else {
+    					// Not valid credentials
+    					status = "Invalid User Credentials";
+    					System.err.println(status);
+    					broadcastMessage(status,getClientNum());
+    				}
+    				
+	    		
+	    		// case "scheduleAppointment"
     		
 	    		default:
 	    			System.out.println("[processMessageFromCommunicator]: Unrecognized command \'" + cmd + "\'");
@@ -269,12 +312,18 @@ public class RezServer extends JFrame {
     			
     		} // end Switch
     		
-    	} catch (SQLException e) {
+    	} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			// @TODO: Figure out client num
+			broadcastMessage("Something went wrong. Please try again", getClientNum());
 		}
     }
     
+    public int getClientNum() {
+    	return this.clientNum;
+    }
+ 
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(() -> {
 			RezServer server = new RezServer(); // Create an instance of Server on the Event Dispatch Thread
