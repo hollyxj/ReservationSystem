@@ -108,7 +108,8 @@ public class MainFrame extends JFrame {
     
     public static void sendJDialogue(String msg) {
 		SwingUtilities.invokeLater(() -> {
-			JOptionPane.showMessageDialog(null, msg); 
+			JOptionPane.showMessageDialog(null, msg);
+//			JOptionPane.setAlwaysOnTop(true);
 		});
     }
     

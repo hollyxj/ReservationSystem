@@ -43,7 +43,7 @@ public class RezServer extends JFrame {
     
     private ReservationDB db = null;
 
-	private RezServer() {
+	public RezServer() {
 		super("Server");
 		try {
 			privateKey = Encryption.readPrivateKey("keypairs/pkcs8_key");
@@ -323,7 +323,7 @@ public class RezServer extends JFrame {
     public int getClientNum() {
     	return this.clientNum;
     }
- 
+    
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(() -> {
 			RezServer server = new RezServer(); // Create an instance of Server on the Event Dispatch Thread
