@@ -103,13 +103,20 @@ public class MainFrame extends JFrame {
         setSize(400, 300);
         setLocationRelativeTo(null);
         setVisible(true);
-        setAlwaysOnTop(true);
+//        setAlwaysOnTop(true);
     }
     
-    public static void sendJDialogue(String msg) {
+    public static void sendAlert(String msg) {
+//		JOptionPane.showMessageDialog(null, msg); //, "Alert", JOptionPane.INFORMATION_MESSAGE);
+
 		SwingUtilities.invokeLater(() -> {
-			JOptionPane.showMessageDialog(null, msg);
-//			JOptionPane.setAlwaysOnTop(true);
+			JOptionPane.showMessageDialog(null, msg, "Alert", JOptionPane.INFORMATION_MESSAGE);
+		});
+    }
+    
+    public static void sendError(String msg) {
+		SwingUtilities.invokeLater(() -> {
+			JOptionPane.showMessageDialog(null, msg, "Error", JOptionPane.ERROR_MESSAGE);
 		});
     }
     

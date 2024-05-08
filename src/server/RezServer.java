@@ -80,7 +80,7 @@ public class RezServer extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null); // Center the frame on the screen
         setVisible(true); // Make the frame visible
-        setAlwaysOnTop(true);
+//        setAlwaysOnTop(true);
 	}
 	
 	public String getDate() {
@@ -119,7 +119,7 @@ public class RezServer extends JFrame {
 	
 	public void broadcastMessage(String message, int localClientNum) {
 		// Broadcast a message to all the clients
-		System.out.println("broadcast message got: \'"+message+"\'");
+		System.out.println("RezServer:[broadcast message][message]:\'"+message+"\'");
 		try {			
 	        for (HashMap.Entry<Integer, DataOutputStream> entry : this.clientMap.entrySet()) {
 	            int clientNum = entry.getKey();
@@ -141,7 +141,13 @@ public class RezServer extends JFrame {
 					// Might be useful later... time will tell...
 					String encryptedMessage = Encryption.encrypt(senderKey, msgToEncrypt);
 					outputStream.writeInt(localClientNum);
+//		            outputStream.writeUTF("RezServer:[broadcastMessage]:TESTING");
+//		            outputStream.writeUTF("RezServer:[broadcastMessage]:[encryptedMessage]:"+encryptedMessage);
+
 		            outputStream.writeUTF(encryptedMessage);
+		            
+		            
+		            
 				} catch (InvalidKeyException | NoSuchPaddingException | NoSuchAlgorithmException
 						| InvalidAlgorithmParameterException | BadPaddingException | IllegalBlockSizeException e) {
 					// TODO Auto-generated catch block
@@ -154,7 +160,7 @@ public class RezServer extends JFrame {
 			e.printStackTrace();
 		}
 	}
-	
+
     private void startServer() {
         new Thread(() -> {
             try {
@@ -220,6 +226,14 @@ public class RezServer extends JFrame {
 	                    // Broadcast encrypted message to all connected clients	
 	                    broadcastMessage(decryptedMessage, localClientNum);
 	                    
+	                    // ADD IN COMMANDS HERE
+	                    
+	                    
+	                    
+	                    
+	                    
+	                    
+	                    
 	                    // Broadcast encrypted message to all connected clients	
 	                    printMessageOnServerConsole(decryptedMessage);
 	                    
@@ -245,6 +259,8 @@ public class RezServer extends JFrame {
     }
     
     private void processMessageFromCommunicator(String cmd) {
+		System.out.println("**********");
+
 		System.out.println("In processMessageFromCommunicator");
 		System.out.println("[cmd]="+cmd);
 
@@ -253,6 +269,7 @@ public class RezServer extends JFrame {
     	
     	String[] parts = cmd.split(",");
     	String function = parts[0];
+    	System.out.println("RezServer:[processMessageFromCommunicator]:[function]:" + function);
     	String status = null;
     	
     	String name = null;
@@ -260,53 +277,86 @@ public class RezServer extends JFrame {
     	String pwd = null;
     	String encryptedPwd = null;
     	String decryptedPwd = null;
+    	String msg = null;
     	
     	try { 
     		switch (function) {
 	    		case "addUser": 
+	    			// for Sign Up
 	    			System.out.println("In case addUser");
 
 	    			name = parts[1];
 	    			email = parts[2];
 	    			pwd = parts[3];    		
 	    			
-	    			encryptedPwd = PKCS5.encrypt(pwd);
-	    			// Send to DB
-	    			db.addUserToDB(name, email, encryptedPwd); // send encrypted password
-	    			System.out.println("[encryptedPwd]="+encryptedPwd);
-
-	    			break;
+	    			
+	    			if (!name.equals("") && !email.equals("") && !pwd.equals("")) {
+		    			encryptedPwd = PKCS5.encrypt(pwd);
+		    			// Send to DB
+		    			db.addUserToDB(name, email, encryptedPwd); // send encrypted password
+		    			System.out.println("[encryptedPwd]="+encryptedPwd);
+	    			}
+	    			else {
+	    				// name/ email/ password are null
+	    				status = generateErrorStatus("Name, email, and password required.\nPlease enter a valid name, email, and password and try again.");			
+						System.err.println(status);
+						broadcastMessage(status,getClientNum());
+	    			}
+	    			break; // end case addUser
+	   
 	    			
 	    		case "authenticate":
-	    			System.out.println("In case authenticate");
+	    			// for Sign In
+	    			System.out.println("In case authenticate:");
 	    			email = parts[1];
+	    			System.out.println("[email]="+email);
 	    			pwd = parts[2];
-	    			encryptedPwd = db.getEncryptedPasswordFromDB(email);
-	    			System.out.println("[encryptedPwd]="+encryptedPwd);
-
-	    			decryptedPwd = PKCS5.decrypt(encryptedPwd, pwd);
-	    			System.out.println("[decryptedPwd]="+decryptedPwd);
 	    			System.out.println("[pwd]="+pwd);
 
 	    			
-    				if (decryptedPwd.equals(pwd)) {
-    					// Good
-    					
-    					status = "Login Successful";
-    					System.out.println(status);
-    					broadcastMessage(status,getClientNum());
 
-    				} else {
-    					// Not valid credentials
-    					status = "Invalid User Credentials";
-    					System.err.println(status);
-    					broadcastMessage(status,getClientNum());
+	    			if ((!email.equals("") && !pwd.equals(""))) {
+		    			encryptedPwd = db.getEncryptedPasswordFromDB(email);
+		    			System.out.println("[encryptedPwd]="+encryptedPwd);
+		
+		    			decryptedPwd = PKCS5.decrypt(encryptedPwd, pwd);
+		    			System.out.println("\t[decryptedPwd]="+decryptedPwd);
+		    			System.out.println("\t[pwd]="+pwd);
+		
+		    			
+						if (decryptedPwd.equals(pwd)) {
+							// Good - Valid credentials
+							status = generateAlertStatus("Login Successful");
+							System.out.println(status);
+							broadcastMessage(status,getClientNum());
+						} else {
+							// Bad - Not valid credentials
+							status = generateErrorStatus("Invalid User Credentials");
+							System.err.println(status);
+							broadcastMessage(status,getClientNum());
+						}
     				}
+	    			else {
+	    				// email/ password are null
+	    				status = generateErrorStatus("Email and password required.\nPlease enter a valid email and password and try again.");			
+						System.err.println(status);
+						broadcastMessage(status,getClientNum());
+
+	    			}	
+    				break; // end case authenticate
     				
-	    		
+	    		case "":
+	    			status = generateErrorStatus("RezServer:[processMessageFromCommunicator]: case Null");
+					System.err.println(status);
+					
+					broadcastMessage(status,getClientNum());
+	    			break;
 	    		// case "scheduleAppointment"
     		
+    				
 	    		default:
+					status = generateIgnoreStatus("Unrecognized command \'" + cmd + "\'");
+					System.err.println(status);
 	    			System.out.println("[processMessageFromCommunicator]: Unrecognized command \'" + cmd + "\'");
 	    			break;
     			
@@ -317,8 +367,23 @@ public class RezServer extends JFrame {
 			e.printStackTrace();
 			// @TODO: Figure out client num
 			broadcastMessage("Something went wrong. Please try again", getClientNum());
+			status = generateErrorStatus("Something went wrong. Please try again");
+			System.err.println(status);
 		}
     }
+    
+	private String generateErrorStatus(String msg) {
+		return "error,"+msg;
+	}
+	
+	private String generateIgnoreStatus(String msg) {
+		return "ignore,"+msg;
+	}
+	
+	private String generateAlertStatus(String msg) {
+		return "alert,"+msg;
+	}
+
     
     public int getClientNum() {
     	return this.clientNum;

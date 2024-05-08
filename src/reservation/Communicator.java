@@ -146,8 +146,7 @@ public class Communicator {
 						String status = Encryption.decrypt(key, msgFromServer);
 						System.out.println("status from server is: " + status);
 						
-    					MainFrame.sendJDialogue(status);
-
+    					parseStatus(status);	
 						
 //		                SwingUtilities.invokeLater(() -> { textArea.append(decryptedMessage + "\n"); });
 					} catch (IllegalArgumentException e) {
@@ -212,6 +211,46 @@ public class Communicator {
 //                this.connectItem.setEnabled(true); 
             });
         }
+    }
+    
+    private String parseStatus(String msg) {
+    	System.out.println("In Communicator:parseStatus");
+    	String[] parts = msg.split(",");
+    	String function = parts[0];
+    	System.out.println("Communicator:[parseStatus]:[function]:" + function);
+
+    	// Remove the 'function' from the message and send the rest of the string in the pop up
+    	String status = msg.replace(parts[0]+",", "");
+    	try { 
+    		switch (function) {
+	    		case "ignore": 
+	    			// do nothing
+	    			System.out.println("Communicator:[parseStatus]:[ignore]:"+status);
+	    			break;
+	    		
+	    		case "alert":
+	    			// Show an alert in the mainframe
+	    			System.out.println("Communicator:[parseStatus]:[alert]:"+status);
+					MainFrame.sendAlert(status);
+	    			break;
+	    			
+	    		case "error":
+	    			// Show an error in the mainframe
+	    			System.out.println("Communicator:[parseStatus]:[error]:"+status);
+					MainFrame.sendError(status);
+	    			break;
+	    			
+	    		default:
+	    			System.out.println("Communicator:[parseStatus]: Unrecognized status \'" + status + "\'");
+	    			break;
+	    			
+    		} // end switch
+    	} catch (Exception e) {
+    		
+    	}
+    	
+    	return "";
+    	
     }
     
     private Key getCommunicationKey() {

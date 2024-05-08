@@ -12,8 +12,10 @@ public class run {
     	// Start server
     	SwingUtilities.invokeLater(() -> {
 			RezServer server = new RezServer(); // Create an instance of Server on the Event Dispatch Thread
-		});
-    	// Initialize the user GUI
-    	MainFrame mf = new MainFrame();
+			// Initialize the user GUI
+        	MainFrame mf = new MainFrame();
+    	});
+
+    	
     }
 }
