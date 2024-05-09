@@ -9,6 +9,7 @@ import java.awt.BorderLayout;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.EOFException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -23,11 +24,15 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.swing.*;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+
 import java.security.*;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import com.google.gson.*;
 
 
 public class RezServer extends JFrame {
@@ -318,9 +323,15 @@ public class RezServer extends JFrame {
 	    				// good
 	    				// required fields are filled out! yay
 		    			db.addAvailabilityToDB(time, date, appointmentType, who, notes, shortDescription); 
+	    				
+		    			System.out.println("\n\n\nHERE\n\n\n");
+		    			
+		    			status = generateAlertStatus("Availability added!");			
+						System.out.println(status);
+		    			System.out.println("\n\n\nHERE STATUS: " + status + "\n\n\n");
 
-	    				
-	    				
+						
+						broadcastMessage(status,getClientNum());
 	    			} else {
 	    				// one of the required fields is null
 	    				// NOTE: notes & short description fields not required
@@ -331,6 +342,31 @@ public class RezServer extends JFrame {
 	    			
 	    			break; // end addAvailability
 	    			
+	    			
+	    		case "loadJSON": 
+	    			System.out.println("In case Load JSON:");
+
+	    			// Call your Database method to get availability data as a JSON array
+	    		    JsonArray availabilityArray = db.getAvailabilityFromDB();
+
+	    		    // Convert the JSON array to a JSON string using Gson
+	    		    String jsonString = new Gson().toJson(availabilityArray);
+
+	    		    // Write the JSON string to a file
+	    		    try (FileWriter fileWriter = new FileWriter("availability.json")) {
+	    		        fileWriter.write(jsonString);
+	    		        System.out.println("JSON file generated successfully.");
+	    		    } catch (IOException e) {
+	    		        e.printStackTrace();
+	    		        System.err.println("Error writing JSON file: " + e.getMessage());
+	    		    }
+
+	    		    // Broadcast or use the status message as needed
+	    		    status = generateAlertStatus("Load Successful");
+	    		    broadcastMessage(status, getClientNum());
+//	    			
+	    			break; // end loadJSON
+	    			
 	    		case "authenticate":
 	    			// for Log In
 	    			System.out.println("In case authenticate:");
@@ -340,7 +376,6 @@ public class RezServer extends JFrame {
 	    			System.out.println("[pwd]="+pwd);
 
 	    			
-
 	    			if ((!email.equals("") || !pwd.equals(""))) {
 		    			encryptedPwd = db.getEncryptedPasswordFromDB(email);
 		    			System.out.println("[encryptedPwd]="+encryptedPwd);
@@ -376,7 +411,8 @@ public class RezServer extends JFrame {
 					System.err.println(status);
 					
 					broadcastMessage(status,getClientNum());
-	    			break;
+	    			break; // end case ""
+	    		
 	    		// case "scheduleAppointment"
     		
     				

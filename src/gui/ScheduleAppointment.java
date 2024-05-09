@@ -8,11 +8,15 @@ import ca.odell.glazedlists.swing.TextComponentMatcherEditor;
 import static ca.odell.glazedlists.swing.GlazedListsSwing.eventTableModelWithThreadProxyList;
 import static ca.odell.glazedlists.swing.GlazedListsSwing.eventListModelWithThreadProxyList;
 
-
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -82,9 +86,34 @@ public class ScheduleAppointment extends JPanel implements TableFormat<Appointme
 		panel.add(issuesTableScrollPane,       new GridBagConstraints(1, 0, 1, 4, 0.85, 1.0,
 		      GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
 	
-		add(panel);
-		setSavedState(this);
-		return this;
+		JButton loadButton = new JButton("Load");
+        loadButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            	handleLoadButton();
+//                loadAppointments(); // Call your loadAppointments method when the button is clicked
+            }
+        });
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        buttonPanel.add(loadButton);
+
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.add(panel, BorderLayout.CENTER);
+        mainPanel.add(buttonPanel, BorderLayout.SOUTH);
+
+        add(mainPanel);
+        setSavedState(this);
+        return this;
+	}
+	
+	private void handleLoadButton() {
+        System.out.println("ScheduleAppointment: Load button pressed.");
+        
+        System.out.println();
+
+        Communicator c = Communicator.getCommunicator();
+        c.loadJSON();
 	}
 
 	@Override

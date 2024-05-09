@@ -2,3 +2,4 @@
 src/.DS_Store
 bin/
 reservations.db
+availability.json

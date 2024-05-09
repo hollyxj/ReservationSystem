@@ -61,7 +61,7 @@ public class Communicator {
         					  +  name + ","
         					  +  email + ","
         					  +  pwd + "\n";
-        System.out.println("[addUser]="+submittedStr);
+        System.out.println("Communicator:[addUser]="+submittedStr);
         
         sendMessageToServer(submittedStr);
         // add the user to the Database
@@ -76,8 +76,8 @@ public class Communicator {
         					  +  who + ","
         					  +  notes + ","
         					  +  shortDesc + "\n";
-        System.out.println("[addAvailability]="+submittedStr);
-        
+        System.out.println("Communicator:[addAvailability]="+submittedStr);
+ 
         sendMessageToServer(submittedStr);
         // add the user to the Database
 	}
@@ -87,11 +87,15 @@ public class Communicator {
         String submittedStr = "authenticate," // action called by Server
         					  +  email + ","
         					  +  pwd + "\n";
-        System.out.println("[authenticate]="+submittedStr);
-        
+        System.out.println("Communicator:[authenticate]="+submittedStr);
         sendMessageToServer(submittedStr);
 	}
 	
+	public void loadJSON() {
+		String submittedStr = "loadJSON," + "\n";
+        System.out.println("[loadJSON]="+submittedStr);
+        sendMessageToServer(submittedStr);
+	}
 
     public void sendMessageToServer(String msg) {
     	// Send the message to the server
@@ -161,7 +165,17 @@ public class Communicator {
 						String status = Encryption.decrypt(key, msgFromServer);
 						System.out.println("status from server is: " + status);
 						
+						
+						
+						
+						
+						
     					parseStatus(status);	
+    					
+    					
+    					
+    					
+    					
 						
 //		                SwingUtilities.invokeLater(() -> { textArea.append(decryptedMessage + "\n"); });
 					} catch (IllegalArgumentException e) {

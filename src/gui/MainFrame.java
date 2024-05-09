@@ -93,7 +93,7 @@ public class MainFrame extends JFrame {
         editItem.addActionListener(e -> {
         	// Schedule appointment page
         	switchToEditAvailability();
-        	this.schedulePage.setSavedState((JPanel) getContentPane());
+        	this.editAvailPage.setSavedState((JPanel) getContentPane());
 
         });
         exitItem.addActionListener(e -> System.exit(0)); // Exit the application
@@ -133,7 +133,7 @@ public class MainFrame extends JFrame {
         // Set frame properties
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         pack();
-        setSize(750, 500);
+        setSize(750, 550);
         setLocationRelativeTo(null);
         setVisible(true);
    
@@ -142,7 +142,6 @@ public class MainFrame extends JFrame {
     
     public static void sendAlert(String msg) {
 //		JOptionPane.showMessageDialog(null, msg); //, "Alert", JOptionPane.INFORMATION_MESSAGE);
-
 		SwingUtilities.invokeLater(() -> {
 			JOptionPane.showMessageDialog(null, msg, "Alert", JOptionPane.INFORMATION_MESSAGE);
 		});

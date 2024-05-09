@@ -1,5 +1,6 @@
 package database;
 import java.sql.*;
+import com.google.gson.*;
 import encryption.*;
 
 public class ReservationDB {
@@ -85,6 +86,50 @@ public class ReservationDB {
 			this.connection.close();
 		}
 	}
+	
+	 public JsonArray getAvailabilityFromDB() {
+	        JsonArray jsonArray = new JsonArray();
+	        PreparedStatement pstmt = null;
+	        ResultSet resultSet = null;
+
+	        try {
+	            // Establish JDBC connection
+	            connection = DriverManager.getConnection("jdbc:sqlite:reservations.db");
+
+	            // Prepare SQL query
+	            String sqlQuery = "SELECT * FROM availability";
+	            pstmt = connection.prepareStatement(sqlQuery);
+
+	            // Execute query
+	            resultSet = pstmt.executeQuery();
+
+	            // Convert ResultSet to JSON
+	            jsonArray = resultSetToJson(resultSet);
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        } 
+	        return jsonArray;
+	    }
+
+	    private JsonArray resultSetToJson(ResultSet resultSet) throws SQLException {
+	        JsonArray jsonArray = new JsonArray();
+	        ResultSetMetaData metaData = resultSet.getMetaData();
+	        int columnCount = metaData.getColumnCount();
+
+	        while (resultSet.next()) {
+	            JsonObject jsonObject = new JsonObject();
+
+	            for (int i = 1; i <= columnCount; i++) {
+	                String columnName = metaData.getColumnLabel(i);
+	                Object value = resultSet.getObject(i);
+	                jsonObject.addProperty(columnName, value.toString());
+	            }
+
+	            jsonArray.add(jsonObject);
+	        }
+
+	        return jsonArray;
+	    }
 	
 	public static void main(String[] args) {
 		
