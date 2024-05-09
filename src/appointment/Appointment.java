@@ -1,7 +1,7 @@
 // Modified by Holly Jordan 2024 from:
 /*   Issuezilla in Java                                                       */
 /*   COPYRIGHT 2005 JESSE WILSON                                              */
-package reservation;
+package appointment;
 
 import java.util.*;
 import java.time.LocalTime;

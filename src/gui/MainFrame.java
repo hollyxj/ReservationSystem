@@ -1,4 +1,4 @@
-package reservation;
+package gui;
 import server.*;
 
 import java.awt.BorderLayout;
@@ -43,9 +43,8 @@ public class MainFrame extends JFrame {
     private Welcome welcomePage;
     private ScheduleAppointment schedulePage;
 
-    
     public MainFrame() {
-        super("MainFrame");
+        super("Rezerve");
 		createGUI();
     }
     
@@ -101,7 +100,6 @@ public class MainFrame extends JFrame {
         menu.add(exitItem);
         menuBar.add(menu);
         setJMenuBar(menuBar);
-
         
         
         // Load the image icon from the "resources" folder
@@ -124,7 +122,7 @@ public class MainFrame extends JFrame {
         // Set frame properties
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         pack();
-        setSize(400, 300);
+        setSize(750, 500);
         setLocationRelativeTo(null);
         setVisible(true);
    

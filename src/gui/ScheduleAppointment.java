@@ -1,4 +1,4 @@
-package reservation;
+package gui;
 import ca.odell.glazedlists.*;
 import ca.odell.glazedlists.matchers.MatcherEditor;
 import ca.odell.glazedlists.swing.AdvancedTableModel;
@@ -21,21 +21,32 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
+
+import appointment.Appointment;
+import appointment.AppointmentComparator;
+import appointment.AppointmentTableFormat;
+import appointment.AppointmentTextFilterator;
+import appointment.AppointmentToUserList;
 import ca.odell.glazedlists.gui.TableFormat;
 import ca.odell.issuezilla.Issue;
 
 // SOURCE: https://glazedlists.github.io/glazedlists-tutorial/#hello-world
 
-public class glazed implements TableFormat<Appointment>  {
+public class ScheduleAppointment extends JPanel implements TableFormat<Appointment>  {
 	/**
 	 * Display a frame for browsing issues.
 	 */
 	
 	/** event list that hosts the issues */
-
+	private static final long serialVersionUID = 1L;
+	private JPanel savedState;
 	private EventList<Appointment> appointmentEventList = new BasicEventList<>(); 
 
-	public void display() {
+	public ScheduleAppointment() {
+		initGUI();
+	}
+	
+	public JPanel initGUI()  {
 		SortedList<Appointment> sortedAppointments = new SortedList<>(appointmentEventList, new AppointmentComparator());
 		JTextField filterEdit = new JTextField(10);
 		AppointmentTextFilterator filterator = new AppointmentTextFilterator();
@@ -71,12 +82,9 @@ public class glazed implements TableFormat<Appointment>  {
 		panel.add(issuesTableScrollPane,       new GridBagConstraints(1, 0, 1, 4, 0.85, 1.0,
 		      GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
 	
-	  	// create a frame with that panel
-		JFrame frame = new JFrame("Schedule Appointment");
-		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		frame.setSize(540, 380);
-		frame.getContentPane().add(panel);
-		frame.setVisible(true);
+		add(panel);
+		setSavedState(this);
+		return this;
 	}
 
 	@Override
@@ -97,8 +105,12 @@ public class glazed implements TableFormat<Appointment>  {
 		return null;
 	}
 	
-	public static void main(String[] args) {
-		glazed G = new glazed();
-		G.display();
-	}
+    public void setSavedState(JPanel toSave) {
+    	this.savedState = toSave;
+    }
+    
+    public JPanel getSavedState() {
+    	return this.savedState;
+    }
+
 } // end class

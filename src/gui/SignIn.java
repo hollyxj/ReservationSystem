@@ -1,4 +1,4 @@
-package reservation;
+package gui;
 import database.*;
 import server.*;
 

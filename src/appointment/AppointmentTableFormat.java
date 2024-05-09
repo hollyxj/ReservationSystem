@@ -1,4 +1,4 @@
-package reservation;
+package appointment;
 
 import ca.odell.glazedlists.gui.TableFormat;
 import ca.odell.issuezilla.Issue;
@@ -26,13 +26,13 @@ public class AppointmentTableFormat implements TableFormat<Appointment> {
 	    case 2:
 	    	return "Date";
 	    case 3:
-	    	return "Appointment Type";
+	    	return "Type";
 	    case 4:
 	    	return "Notes"; // person who the appt is with
 	    case 5:
-	    	return "Scheduling with";
+	    	return "With";
 	    case 6: 
-	    	return "Short Description";
+	    	return "Description";
     }
     throw new IllegalStateException("Unexpected column: " + column);
   }

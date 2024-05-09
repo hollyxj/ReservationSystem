@@ -1,5 +1,5 @@
-// Communicates between MainFrame and RezServer
-package reservation;
+// Communicates between MainFrame GUI and RezServer Server
+package gui;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;

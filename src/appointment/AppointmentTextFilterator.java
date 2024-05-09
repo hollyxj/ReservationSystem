@@ -1,4 +1,4 @@
-package reservation;
+package appointment;
 
 import java.util.List;
 

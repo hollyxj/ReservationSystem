@@ -1,4 +1,4 @@
-package reservation;
+package appointment;
 
 import java.time.LocalTime;
 import java.util.Comparator;

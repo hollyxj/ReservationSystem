@@ -1,10 +1,9 @@
-package reservation;
+package appointment;
 
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.TransformedList;
 import ca.odell.glazedlists.event.ListEvent;
 import ca.odell.issuezilla.Issue;
-// SOURCE: https://glazedlists.github.io/glazedlists-tutorial/#hello-world
 
 /**
  * An IssuesToUserList is a list of users that is obtained by getting the users from an issues list.

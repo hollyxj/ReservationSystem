@@ -2,6 +2,8 @@
 package server;
 import database.*;
 import encryption.*;
+import gui.Communicator;
+import gui.MainFrame;
 
 import java.awt.BorderLayout;
 import java.io.DataInputStream;
@@ -20,9 +22,6 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.swing.*;
-
-import reservation.Communicator;
-import reservation.MainFrame;
 
 import java.security.*;
 import java.sql.SQLException;
@@ -44,7 +43,7 @@ public class RezServer extends JFrame {
     private ReservationDB db = null;
 
 	public RezServer() {
-		super("Server");
+		super("ReZerver (aka The Server)");
 		try {
 			privateKey = Encryption.readPrivateKey("keypairs/pkcs8_key");
 		} catch (Exception e) {
