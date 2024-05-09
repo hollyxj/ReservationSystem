@@ -220,7 +220,8 @@ public class Communicator {
     	System.out.println("Communicator:[parseStatus]:[function]:" + function);
 
     	// Remove the 'function' from the message and send the rest of the string in the pop up
-    	String status = msg.replace(parts[0]+",", "");
+    	String toReplace = parts[0]+",";
+    	String status = msg.replace(toReplace, "");
     	try { 
     		switch (function) {
 	    		case "ignore": 
@@ -236,7 +237,7 @@ public class Communicator {
 	    			
 	    		case "error":
 	    			// Show an error in the mainframe
-	    			System.out.println("Communicator:[parseStatus]:[error]:"+status);
+	    			System.err.println("Communicator:[parseStatus]:[error]:"+status);
 					MainFrame.sendError(status);
 	    			break;
 	    			

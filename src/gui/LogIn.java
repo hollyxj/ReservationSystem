@@ -11,7 +11,7 @@ public class LogIn extends JPanel {
 	
 	private static final long serialVersionUID = 1L;
 	private JTextField emailField = new JTextField(25);
-	private JPasswordField passwordField = new JPasswordField(15);
+	private JPasswordField passwordField = new JPasswordField();
 	private JCheckBox showPasswordCheckbox = new JCheckBox();
 	private JPanel savedState;
 	
@@ -38,8 +38,10 @@ public class LogIn extends JPanel {
         JLabel passwordLabel = new JLabel("Password:");
 
         this.emailField.setEditable(true);
-        this.emailField.setPreferredSize(new Dimension(200,20));
+        this.emailField.setPreferredSize(new Dimension(200,25));
         this.passwordField.setEditable(true);
+        this.passwordField.setPreferredSize(new Dimension(200,25));
+
         this.showPasswordCheckbox = new JCheckBox();
 
         emailLabel.setFont(h2);
@@ -48,15 +50,20 @@ public class LogIn extends JPanel {
         emailField.setFont(field);
         passwordField.setFont(field);
         
+        JPanel flow = new JPanel();
+        flow.setLayout(new FlowLayout());
+        
+        flow.add(emailLabel);
+        flow.add(emailField);
         // Panel configurations
         JPanel gridPanel = new JPanel();
-        gridPanel.setLayout(new GridLayout(5, 1));
+        gridPanel.setLayout(new GridLayout(4, 1));
 
         gridPanel.add(title); // 1
         gridPanel.add(subtitle); // 2
         
-        gridPanel.add(emailLabel); // 3
-        gridPanel.add(this.emailField); // 4
+        gridPanel.add(flow); // 3
+
 
         // Press the "Tab" key to go to the next field functionality
         this.emailField.addKeyListener(new KeyListener() {
@@ -84,7 +91,7 @@ public class LogIn extends JPanel {
         passwordPanel.add(this.passwordField);
         passwordPanel.add(new JLabel("Show:")); // Eyeball here
         passwordPanel.add(this.showPasswordCheckbox);
-        gridPanel.add(passwordPanel); // 5
+        gridPanel.add(passwordPanel); // 4
 
         // Show/hide password checkbox functionality
         showPassword();

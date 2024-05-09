@@ -53,9 +53,11 @@ public class SignUp extends JPanel {
         JLabel passwordLabel = new JLabel("Password:");
 
         this.nameField.setEditable(true);
-        this.nameField.setPreferredSize(new Dimension(200,20));
+        this.nameField.setPreferredSize(new Dimension(200,25));
         this.emailField.setEditable(true);
+        this.emailField.setPreferredSize(new Dimension(200,25));
         this.passwordField.setEditable(true);
+        this.passwordField.setPreferredSize(new Dimension(200,25));
         this.showPasswordCheckbox = new JCheckBox();
         
         nameLabel.setFont(h2);
@@ -66,16 +68,28 @@ public class SignUp extends JPanel {
         emailField.setFont(field);
         passwordField.setFont(field);
 
-
         // Panel configurations
         JPanel gridPanel = new JPanel();
-        gridPanel.setLayout(new GridLayout(7, 1));
+        gridPanel.setLayout(new GridLayout(5, 1));
+        
+        JPanel nameFlow = new JPanel();
+        nameFlow.setLayout(new FlowLayout());
+        
+        nameFlow.add(nameLabel);
+        nameFlow.add(nameField);
 
+        JPanel emailFlow = new JPanel();
+        emailFlow.setLayout(new FlowLayout());
+        
+        emailFlow.add(emailLabel);
+        emailFlow.add(emailField);
+        
+        
         gridPanel.add(title); // 1
         gridPanel.add(subtitle); // 2
         
-        gridPanel.add(nameLabel); // 3
-        gridPanel.add(this.nameField); // 4
+        gridPanel.add(nameFlow); // 3
+        gridPanel.add(emailFlow); // 4
 
         // Press the "Tab" key to go to the next field functionality
         this.nameField.addKeyListener(new KeyListener() {
@@ -97,9 +111,6 @@ public class SignUp extends JPanel {
             }
         });
 
-        gridPanel.add(emailLabel); // 5
-        gridPanel.add(this.emailField);// 6
-
         JPanel passwordPanel = new JPanel();
         passwordPanel.setLayout(new FlowLayout());
         passwordPanel.add(passwordLabel);
@@ -108,7 +119,7 @@ public class SignUp extends JPanel {
         showLabel.setFont(h4);
         passwordPanel.add(showLabel); // Eyeball here
         passwordPanel.add(this.showPasswordCheckbox);
-        gridPanel.add(passwordPanel); // 7
+        gridPanel.add(passwordPanel); // 5
 
         // Show/hide password checkbox functionality
         showPassword();

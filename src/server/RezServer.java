@@ -365,8 +365,8 @@ public class RezServer extends JFrame {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			// @TODO: Figure out client num
-			broadcastMessage("Something went wrong. Please try again", getClientNum());
 			status = generateErrorStatus("Something went wrong. Please try again");
+			broadcastMessage(status, getClientNum());
 			System.err.println(status);
 		}
     }
