@@ -133,10 +133,12 @@ public class ScheduleAppointment extends JPanel implements TableFormat<Appointme
 	    System.out.println("ScheduleAppointment: Load button pressed.");
 
         Communicator c = Communicator.getCommunicator();
-        c.loadJSON();
+        c.generateJSON();
 	    
 	    // Read JSON file and populate appointments
 	    Gson gson = new Gson();
+	    
+	    
 	    try (FileReader reader = new FileReader("availability.JSON")) {
 	        // Define the type of the appointment list using TypeToken
 	        Type appointmentListType = new TypeToken<List<Appointment>>(){}.getType();

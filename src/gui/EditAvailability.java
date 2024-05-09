@@ -124,6 +124,8 @@ public class EditAvailability extends JPanel {
         descFlow.add(descLabel);
         descFlow.add(shortDescription);
         
+        
+        // BUTTONS
         JButton submitButton = new JButton("Submit");
         submitButton.setFont(h3);
         submitButton.addActionListener(e -> {
@@ -145,12 +147,35 @@ public class EditAvailability extends JPanel {
 				e1.printStackTrace();
 			}
         });
+        
+        JButton loadDefaultsButton = new JButton("Load Default");
+        loadDefaultsButton.setFont(h3);
+        loadDefaultsButton.addActionListener(e -> {
+        	 try {
+        		timeField.setText("10:30 AM");
+    	        dateField.setText("May 14");
+    	        appointmentType.setText("Hair");
+    	        who.setText("Poppy");
+    	        notes.setText("Cost starts at $50");
+    	        shortDescription.setText("Wash, blow dry & trim");
 
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+        });
+        
         
         JPanel buttonFlow = new JPanel();
         buttonFlow.setLayout(new FlowLayout());
         buttonFlow.add(submitButton);
         buttonFlow.add(clearButton);
+        buttonFlow.add(loadDefaultsButton);
+
+
+        // END BUTTONS
+        
+        
         
         
         gridPanel.add(title); // 
@@ -245,11 +270,14 @@ public class EditAvailability extends JPanel {
     	String shortDesc = this.shortDescription.getText();
     	    
         // Send info the server
-
         Communicator c = Communicator.getCommunicator();
         c.addAvailability(time, date, aptType, who, notes, shortDesc);
-//        clearFields(); make into button
+        
+        // Create/ update the JSON file
+        c.generateJSON();
     }
+	
+
     
     public void clearFields() {
     	this.timeField.setText("");

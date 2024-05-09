@@ -91,9 +91,9 @@ public class Communicator {
         sendMessageToServer(submittedStr);
 	}
 	
-	public void loadJSON() {
-		String submittedStr = "loadJSON," + "\n";
-        System.out.println("[loadJSON]="+submittedStr);
+	public void generateJSON() {
+		String submittedStr = "generateJSON," + "\n";
+        System.out.println("[generateJSON]="+submittedStr);
         sendMessageToServer(submittedStr);
 	}
 

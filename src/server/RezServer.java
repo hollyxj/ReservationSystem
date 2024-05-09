@@ -343,19 +343,9 @@ public class RezServer extends JFrame {
 	    			break; // end addAvailability
 	    			
 	    			
-	    		case "loadJSON": 
-	    			System.out.println("In case Load JSON:");
+	    		case "generateJSON": 
+	    			System.out.println("In case generate JSON:");
 
-	    			
-	    			
-	    			
-	    			// If table does not exist show error popup
-	    			
-	    			
-	    			
-	    			
-	    			
-	    			
 	    			// Call your Database method to get availability data as a JSON array
 	    		    JsonArray availabilityArray = db.getAvailabilityFromDB();
 
@@ -365,7 +355,7 @@ public class RezServer extends JFrame {
 	    		    // Write the JSON string to a file
 	    		    try (FileWriter fileWriter = new FileWriter("availability.json")) {
 	    		        fileWriter.write(jsonString);
-	    		        System.out.println("JSON file generated successfully.");
+	    		        System.out.println("JSON file updated successfully.");
 	    		    } catch (IOException e) {
 	    		        e.printStackTrace();
 	    		        System.err.println("Error writing JSON file: " + e.getMessage());
