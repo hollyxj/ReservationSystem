@@ -244,9 +244,8 @@ public class EditAvailability extends JPanel {
 
         Communicator c = Communicator.getCommunicator();
         c.addAvailability(time, date, aptType, who, notes, shortDesc);
-        clearFields();
+//        clearFields(); make into button
     }
-    
     
     public void clearFields() {
     	this.timeField.setText("");
