@@ -305,7 +305,7 @@ public class RezServer extends JFrame {
 	   
 	    			
 	    		case "authenticate":
-	    			// for Sign In
+	    			// for Log In
 	    			System.out.println("In case authenticate:");
 	    			email = parts[1];
 	    			System.out.println("[email]="+email);

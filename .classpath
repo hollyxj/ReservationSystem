@@ -6,6 +6,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="resources/images"/>
 	<classpathentry kind="lib" path="/Users/hollyjordan/Desktop/NYU/* SPR24/Java - Intro to Java/* Lectures/Week 11/Lecture11/sqlite-jdbc-3.34.0.jar">
 		<attributes>
 			<attribute name="module" value="true"/>

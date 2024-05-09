@@ -39,18 +39,19 @@ public class MainFrame extends JFrame {
     private static final long serialVersionUID = 1L;
     	
 	private SignUp signUpPage;
-	private SignIn signInPage;
+	private LogIn logInPage;
     private Welcome welcomePage;
     private ScheduleAppointment schedulePage;
 
+    // TM:   ™
     public MainFrame() {
-        super("Rezerve");
+        super("Rezerve™");
 		createGUI();
     }
     
     private void createGUI() {
     	this.signUpPage = new SignUp();
-        this.signInPage = new SignIn();
+        this.logInPage = new LogIn();
         this.welcomePage = new Welcome();
         this.schedulePage = new ScheduleAppointment();
 
@@ -60,7 +61,7 @@ public class MainFrame extends JFrame {
         // Create menu items
         JMenuItem welcomeItem = new JMenuItem("Welcome");
         JMenuItem signUpItem = new JMenuItem("Sign Up");
-        JMenuItem signInItem = new JMenuItem("Sign In");
+        JMenuItem signInItem = new JMenuItem("Log In");
         JMenuItem scheduleItem = new JMenuItem("Schedule Appointment");
         JMenuItem exitItem = new JMenuItem("Exit");
 
@@ -73,7 +74,7 @@ public class MainFrame extends JFrame {
         signInItem.addActionListener(e -> {
         	// Sign in page
         	switchToSignIn();
-            this.signInPage.setSavedState((JPanel) getContentPane());
+            this.logInPage.setSavedState((JPanel) getContentPane());
         });
         welcomeItem.addActionListener(e -> {
         	// Welcome page
@@ -144,7 +145,7 @@ public class MainFrame extends JFrame {
     }
     
     private void switchToSignIn() {
-        setContentPane(this.signInPage.getSavedState());
+        setContentPane(this.logInPage.getSavedState());
         validate();
         repaint();
     }

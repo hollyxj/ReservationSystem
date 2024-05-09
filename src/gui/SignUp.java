@@ -21,7 +21,6 @@ import java.util.Date;
 //import javafx.scene.control.DatePicker;
 
 public class SignUp extends JPanel {
-	
 	private static final long serialVersionUID = 1L;
 	private JTextField nameField = new JTextField(25);
 	private JTextField emailField = new JTextField(25);
@@ -29,6 +28,12 @@ public class SignUp extends JPanel {
 	private JCheckBox showPasswordCheckbox = new JCheckBox();
 	private JPanel savedState;
 	
+    Font h1 = new Font("Arial", Font.BOLD, 24); 
+    Font h2 = new Font("Arial", Font.BOLD, 18);
+    Font h4 = new Font("Arial", Font.ITALIC, 16);
+    Font field = new Font("Arial", Font.PLAIN, 16);
+
+
 	public SignUp() {
 		// Default constructor
         super(new BorderLayout()); // Set the layout for the panel
@@ -36,6 +41,13 @@ public class SignUp extends JPanel {
 	}
 	
     public JPanel initGUI() {
+    	JLabel title = new JLabel("Sign Up");
+    	JLabel subtitle = new JLabel("Create your Rezerve™ account below");
+    	
+    	title.setFont(h1);
+    	subtitle.setFont(h4);
+
+    	
         JLabel nameLabel = new JLabel("Name:");
         JLabel emailLabel = new JLabel("Email:");
         JLabel passwordLabel = new JLabel("Password:");
@@ -45,13 +57,25 @@ public class SignUp extends JPanel {
         this.emailField.setEditable(true);
         this.passwordField.setEditable(true);
         this.showPasswordCheckbox = new JCheckBox();
+        
+        nameLabel.setFont(h2);
+        emailLabel.setFont(h2);
+        passwordLabel.setFont(h2);
+        
+        nameField.setFont(field);
+        emailField.setFont(field);
+        passwordField.setFont(field);
+
 
         // Panel configurations
-        JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(7, 1));
+        JPanel gridPanel = new JPanel();
+        gridPanel.setLayout(new GridLayout(7, 1));
 
-        panel.add(nameLabel); // 1
-        panel.add(this.nameField); // 2
+        gridPanel.add(title); // 1
+        gridPanel.add(subtitle); // 2
+        
+        gridPanel.add(nameLabel); // 3
+        gridPanel.add(this.nameField); // 4
 
         // Press the "Tab" key to go to the next field functionality
         this.nameField.addKeyListener(new KeyListener() {
@@ -73,16 +97,18 @@ public class SignUp extends JPanel {
             }
         });
 
-        panel.add(emailLabel);
-        panel.add(this.emailField);
+        gridPanel.add(emailLabel); // 5
+        gridPanel.add(this.emailField);// 6
 
         JPanel passwordPanel = new JPanel();
         passwordPanel.setLayout(new FlowLayout());
         passwordPanel.add(passwordLabel);
         passwordPanel.add(this.passwordField);
-        passwordPanel.add(new JLabel("Show:")); // Eyeball here
+        JLabel showLabel = new JLabel("Show:");
+        showLabel.setFont(h4);
+        passwordPanel.add(showLabel); // Eyeball here
         passwordPanel.add(this.showPasswordCheckbox);
-        panel.add(passwordPanel);
+        gridPanel.add(passwordPanel); // 7
 
         // Show/hide password checkbox functionality
         showPassword();
@@ -104,7 +130,7 @@ public class SignUp extends JPanel {
 
         JPanel megaPanel = new JPanel();
         megaPanel.setLayout(new FlowLayout());
-        megaPanel.add(panel);
+        megaPanel.add(gridPanel);
 
         setLayout(new BorderLayout());
         add(megaPanel, BorderLayout.CENTER);

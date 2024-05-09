@@ -7,7 +7,7 @@ import java.awt.*;
 import java.awt.event.*;
 
 
-public class SignIn extends JPanel {
+public class LogIn extends JPanel {
 	
 	private static final long serialVersionUID = 1L;
 	private JTextField emailField = new JTextField(25);
@@ -15,14 +15,26 @@ public class SignIn extends JPanel {
 	private JCheckBox showPasswordCheckbox = new JCheckBox();
 	private JPanel savedState;
 	
-	public SignIn() {
+    Font h1 = new Font("Arial", Font.BOLD, 24); 
+    Font h2 = new Font("Arial", Font.BOLD, 18);
+    Font h4 = new Font("Arial", Font.ITALIC, 16);
+    Font field = new Font("Arial", Font.PLAIN, 16);
+
+	
+	public LogIn() {
 		// Default constructor
         super(new BorderLayout()); // Set the layout for the panel
         initGUI(); // Initialize the GUI components
 	}
 	
     public JPanel initGUI() {
-        JLabel nameOrEmailLabel = new JLabel("Enter user email:");
+    	JLabel title = new JLabel("Log In");
+    	JLabel subtitle = new JLabel("Already have a Rezerve™ account? Sign in below!");
+    	
+    	title.setFont(h1);
+    	subtitle.setFont(h4);
+    	
+        JLabel emailLabel = new JLabel("Email:");
         JLabel passwordLabel = new JLabel("Password:");
 
         this.emailField.setEditable(true);
@@ -30,12 +42,21 @@ public class SignIn extends JPanel {
         this.passwordField.setEditable(true);
         this.showPasswordCheckbox = new JCheckBox();
 
+        emailLabel.setFont(h2);
+        passwordLabel.setFont(h2);
+        
+        emailField.setFont(field);
+        passwordField.setFont(field);
+        
         // Panel configurations
-        JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(7, 1));
+        JPanel gridPanel = new JPanel();
+        gridPanel.setLayout(new GridLayout(5, 1));
 
-        panel.add(nameOrEmailLabel); // 1
-        panel.add(this.emailField); // 2
+        gridPanel.add(title); // 1
+        gridPanel.add(subtitle); // 2
+        
+        gridPanel.add(emailLabel); // 3
+        gridPanel.add(this.emailField); // 4
 
         // Press the "Tab" key to go to the next field functionality
         this.emailField.addKeyListener(new KeyListener() {
@@ -63,7 +84,7 @@ public class SignIn extends JPanel {
         passwordPanel.add(this.passwordField);
         passwordPanel.add(new JLabel("Show:")); // Eyeball here
         passwordPanel.add(this.showPasswordCheckbox);
-        panel.add(passwordPanel);
+        gridPanel.add(passwordPanel); // 5
 
         // Show/hide password checkbox functionality
         showPassword();
@@ -80,7 +101,7 @@ public class SignIn extends JPanel {
 
         JPanel megaPanel = new JPanel();
         megaPanel.setLayout(new FlowLayout());
-        megaPanel.add(panel);
+        megaPanel.add(gridPanel);
 
         setLayout(new BorderLayout());
         add(megaPanel, BorderLayout.CENTER);
