@@ -8,28 +8,31 @@ import java.awt.GridLayout;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
 
 public class EditAvailability extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private JPanel savedState;
 
+	// required fields
 	private JTextField timeField = new JTextField(25);
 	private JTextField dateField = new JTextField(25);
 	private JTextField appointmentType = new JTextField(25);
 	private JTextField who = new JTextField(25);
 	
-	// optional
+	// optional fields
 	private JTextField notes = new JTextField(25);
 	private JTextField shortDescription = new JTextField(25);
-
 	
     Font h1 = new Font("Arial", Font.BOLD, 24); 
     Font h2 = new Font("Arial", Font.BOLD, 18);
@@ -55,9 +58,18 @@ public class EditAvailability extends JPanel {
         JLabel dateLabel = new JLabel("Date:");
         JLabel aptTypeLabel = new JLabel("Appointment Type:");
         JLabel whoLabel = new JLabel("Who:");
-        JLabel notesLabel = new JLabel("Notes:");
-        JLabel descLabel = new JLabel("Short Description:");
+        JLabel optionalLabel = new JLabel("Optional:");
+        JLabel notesLabel = new JLabel("Notes (optional):");
+        JLabel descLabel = new JLabel("Short Description (optional):");
 
+        timeLabel.setFont(h2);
+        dateLabel.setFont(h2);
+        aptTypeLabel.setFont(h2);
+        whoLabel.setFont(h2);
+        optionalLabel.setFont(h4);
+        notesLabel.setFont(h4);
+        descLabel.setFont(h4);
+        
         this.timeField.setEditable(true);
         this.timeField.setPreferredSize(new Dimension(200,25));
         this.dateField.setEditable(true);
@@ -70,13 +82,6 @@ public class EditAvailability extends JPanel {
         this.notes.setPreferredSize(new Dimension(200,25));
         this.shortDescription.setEditable(true);
         this.shortDescription.setPreferredSize(new Dimension(200,25));
-                
-        timeLabel.setFont(h2);
-        dateLabel.setFont(h2);
-        aptTypeLabel.setFont(h2);
-        whoLabel.setFont(h2);
-        notesLabel.setFont(h2);
-        descLabel.setFont(h2);
 
         timeField.setFont(field);
         dateField.setFont(field);
@@ -85,16 +90,9 @@ public class EditAvailability extends JPanel {
         notes.setFont(field);
         shortDescription.setFont(field);
         
-        
-        
-
-
         // Panel configurations
         JPanel gridPanel = new JPanel();
         gridPanel.setLayout(new BoxLayout(gridPanel, BoxLayout.Y_AXIS));
-//        
-//        
-//        JPanel gridPanel = new JPanel(new BoxLayout(throwaway, BoxLayout.Y_AXIS));
         
         JPanel timeFlow = new JPanel();
         timeFlow.setLayout(new FlowLayout());
@@ -126,8 +124,6 @@ public class EditAvailability extends JPanel {
         descFlow.add(descLabel);
         descFlow.add(shortDescription);
         
-        
-        
         JButton submitButton = new JButton("Submit");
         submitButton.setFont(h3);
         submitButton.addActionListener(e -> {
@@ -157,15 +153,18 @@ public class EditAvailability extends JPanel {
         buttonFlow.add(clearButton);
         
         
-        gridPanel.add(title); // 1
-        gridPanel.add(subtitle); // 2
-        
-        gridPanel.add(timeFlow); // 3
-        gridPanel.add(dateFlow); // 4
-        gridPanel.add(aptFlow); // 4
-        gridPanel.add(whoFlow); // 5
-        gridPanel.add(notesFlow); // 6
-        gridPanel.add(descFlow); // 7
+        gridPanel.add(title); // 
+        gridPanel.add(subtitle); // 
+        addSeparator(gridPanel);
+        gridPanel.add(timeFlow); // 
+        gridPanel.add(dateFlow); // 
+        gridPanel.add(aptFlow); // 
+        gridPanel.add(whoFlow); // 
+        addSeparator(gridPanel);
+//        gridPanel.add(optionalLabel); // 
+        gridPanel.add(notesFlow); // 
+        gridPanel.add(descFlow); // 
+        addSeparator(gridPanel);
         gridPanel.add(buttonFlow);
  
 
@@ -180,7 +179,12 @@ public class EditAvailability extends JPanel {
         return this;
     }
     
-    
+    private JPanel addSeparator(JPanel sep) {
+        sep.add(Box.createRigidArea(new Dimension(0, 10))); // Add vertical spacing before the separator
+        sep.add(new JSeparator(SwingConstants.HORIZONTAL)); // Horizontal separator
+        sep.add(Box.createRigidArea(new Dimension(0, 10))); // Add vertical spacing after the separator
+        return sep;
+    }
     
     public JTextField getTimeField() {
 		return timeField;

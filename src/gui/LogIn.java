@@ -61,7 +61,6 @@ public class LogIn extends JPanel {
 
         gridPanel.add(title); // 1
         gridPanel.add(subtitle); // 2
-        
         gridPanel.add(flow); // 3
 
 
@@ -171,5 +170,12 @@ public class LogIn extends JPanel {
 		    }
 		});
 	}
+	
+    private JPanel addSeparator(JPanel sep) {
+        sep.add(Box.createRigidArea(new Dimension(0, 10))); // Add vertical spacing before the separator
+        sep.add(new JSeparator(SwingConstants.HORIZONTAL)); // Horizontal separator
+        sep.add(Box.createRigidArea(new Dimension(0, 10))); // Add vertical spacing after the separator
+        return sep;
+    }
 
 }
