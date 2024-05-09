@@ -1,6 +1,7 @@
 package appointment;
 
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import ca.odell.issuezilla.Issue;
 
@@ -11,13 +12,17 @@ import ca.odell.issuezilla.Issue;
  * @author <a href="mailto:jesse@swank.ca">Jesse Wilson</a>
  */
 public class AppointmentComparator implements Comparator<Appointment> {
-  @Override
-  public int compare(Appointment aptA, Appointment aptB) {
+    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("h:mm a");
 
-    // rating is between 1 and 5, lower is more important
-	LocalTime aptATime = aptA.getTime();
-    LocalTime aptBTime = aptB.getTime();
+    @Override
+    public int compare(Appointment aptA, Appointment aptB) {
+        String timeAString = aptA.getTime();
+        String timeBString = aptB.getTime();
 
-    return aptATime.compareTo(aptBTime);
-  }
+        // Parse time strings into LocalTime objects using the specified format
+        LocalTime aptATime = LocalTime.parse(timeAString, TIME_FORMATTER);
+        LocalTime aptBTime = LocalTime.parse(timeBString, TIME_FORMATTER);
+
+        return aptATime.compareTo(aptBTime);
+    }
 }

@@ -346,6 +346,16 @@ public class RezServer extends JFrame {
 	    		case "loadJSON": 
 	    			System.out.println("In case Load JSON:");
 
+	    			
+	    			
+	    			
+	    			// If table does not exist show error popup
+	    			
+	    			
+	    			
+	    			
+	    			
+	    			
 	    			// Call your Database method to get availability data as a JSON array
 	    		    JsonArray availabilityArray = db.getAvailabilityFromDB();
 

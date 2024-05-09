@@ -8,24 +8,16 @@ import java.time.LocalTime;
 import java.time.LocalDate;
 import java.time.Month;
 
-
-
 public class Appointment {
 
     // mandatory appointment fields
-	// ID
     private Integer id = null;
-    // Time (a LocalTime object, such as 5:00 PM)
-    private LocalTime time = null;
-    // Date (a LocalDate object, such as May 3)
-    private LocalDate date = null;
-    // Appointment type
+    private String time = null;
+    private String date = null; 
     private String appointmentType = null;
-    // Who you are scheduling with
     private String who = null;
 
     // optional fields
-    // Notes
     private String notes = null;
     private String shortDescription = null;
     
@@ -81,24 +73,24 @@ public class Appointment {
     }
 
     /**
-     * Time of the appointment (load status).
+     * Time of the appointment
      */
-    public LocalTime getTime() {
+	public String getTime() { 
         return this.time;
     }
 
-    public void setTime(LocalTime time) {
+    public void setTime(String time) { 
         this.time = time;
     }
 
     /**
      * Date of this appointment
      */
-    public LocalDate getDate() {
+    public String getDate() {
         return this.date;
     }
 
-    public void setStatus(LocalDate date) {
+    public void setStatus(String date) {
         this.date = date;
     }
     

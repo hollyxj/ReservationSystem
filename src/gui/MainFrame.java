@@ -184,6 +184,7 @@ public class MainFrame extends JFrame {
     }
     
     public void switchTo(String page) {
+    	
     	switch(page) {
     		case "welcome":
     			switchToWelcome();
@@ -195,6 +196,8 @@ public class MainFrame extends JFrame {
      }
     
     public static void main(String[] args) {
+        System.out.println(System.getProperties());
+
     	MainFrame mf = new MainFrame();
     }
 }

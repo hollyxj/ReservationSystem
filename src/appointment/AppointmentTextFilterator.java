@@ -13,6 +13,8 @@ import ca.odell.issuezilla.Issue;
  */
 public class AppointmentTextFilterator implements TextFilterator<Appointment> {
 	public void getFilterStrings(List<String> baseList, Appointment apt) {
+		baseList.add(apt.getTime());
+		baseList.add(apt.getDate());
 		baseList.add(apt.getAppointmentType());
 		baseList.add(apt.getWho());
 		baseList.add(apt.getNotes());

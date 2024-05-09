@@ -15,6 +15,10 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileReader;
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -26,6 +30,9 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import appointment.Appointment;
 import appointment.AppointmentComparator;
 import appointment.AppointmentTableFormat;
@@ -33,6 +40,9 @@ import appointment.AppointmentTextFilterator;
 import appointment.AppointmentToUserList;
 import ca.odell.glazedlists.gui.TableFormat;
 import ca.odell.issuezilla.Issue;
+//import com.publicobject.misc.Exceptions;
+//import com.publicobject.misc.Throbber;
+
 
 // SOURCE: https://glazedlists.github.io/glazedlists-tutorial/#hello-world
 
@@ -52,6 +62,9 @@ public class ScheduleAppointment extends JPanel implements TableFormat<Appointme
 	
 	public JPanel initGUI()  {
 		SortedList<Appointment> sortedAppointments = new SortedList<>(appointmentEventList, new AppointmentComparator());
+		
+		
+		
 		JTextField filterEdit = new JTextField(10);
 		AppointmentTextFilterator filterator = new AppointmentTextFilterator();
 		MatcherEditor<Appointment> textMatcherEditor = new TextComponentMatcherEditor<>(filterEdit, filterator);
@@ -86,7 +99,7 @@ public class ScheduleAppointment extends JPanel implements TableFormat<Appointme
 		panel.add(issuesTableScrollPane,       new GridBagConstraints(1, 0, 1, 4, 0.85, 1.0,
 		      GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
 	
-		JButton loadButton = new JButton("Load");
+		JButton loadButton = new JButton("Load JSON File");
         loadButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -107,13 +120,41 @@ public class ScheduleAppointment extends JPanel implements TableFormat<Appointme
         return this;
 	}
 	
-	private void handleLoadButton() {
-        System.out.println("ScheduleAppointment: Load button pressed.");
-        
-        System.out.println();
+//	private void handleLoadButton() {
+//        System.out.println("ScheduleAppointment: Load button pressed.");
+//        
+//        System.out.println();
+//
+//        Communicator c = Communicator.getCommunicator();
+//        c.loadJSON();
+//	}
+	
+	public void handleLoadButton() {
+	    System.out.println("ScheduleAppointment: Load button pressed.");
 
         Communicator c = Communicator.getCommunicator();
         c.loadJSON();
+	    
+	    // Read JSON file and populate appointments
+	    Gson gson = new Gson();
+	    try (FileReader reader = new FileReader("availability.JSON")) {
+	        // Define the type of the appointment list using TypeToken
+	        Type appointmentListType = new TypeToken<List<Appointment>>(){}.getType();
+
+	        // Deserialize the JSON file into a list of appointments
+	        List<Appointment> appointments = gson.fromJson(reader, appointmentListType);
+
+	        // Clear existing appointments
+	        appointmentEventList.clear();
+
+	        // Add loaded appointments to the event list
+	        appointmentEventList.addAll(appointments);
+
+	        // Refresh the view to display the loaded appointments
+	        repaint();
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	    }
 	}
 
 	@Override
