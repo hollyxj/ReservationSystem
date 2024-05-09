@@ -289,7 +289,7 @@ public class RezServer extends JFrame {
 	    			pwd = parts[3];    		
 	    			
 	    			
-	    			if (!name.equals("") && !email.equals("") && !pwd.equals("")) {
+	    			if (!name.equals("") || !email.equals("") || !pwd.equals("")) {
 		    			encryptedPwd = PKCS5.encrypt(pwd);
 		    			// Send to DB
 		    			db.addUserToDB(name, email, encryptedPwd); // send encrypted password
@@ -303,6 +303,32 @@ public class RezServer extends JFrame {
 	    			}
 	    			break; // end case addUser
 	   
+	    		case "addAvailability":
+	    			System.out.println("In case addAvailability");
+//	    			id = parts[];
+	    			String time = parts[1];
+	    			String date = parts[2];
+	    			String appointmentType = parts[3];
+	    			String who = parts[4];
+	    			String notes = parts[5];
+	    			String shortDescription = parts[6];
+	    			
+	    			if (!time.equals("") || !date.equals("") || !appointmentType.equals("") ||
+	    					!who.equals("")) {
+	    				// good
+	    				// required fields are filled out! yay
+		    			db.addAvailabilityToDB(time, date, appointmentType, who, notes, shortDescription); 
+
+	    				
+	    				
+	    			} else {
+	    				// one of the required fields is null
+	    				// NOTE: notes & short description fields not required
+	    				status = generateErrorStatus("Time, Date, Appointment Type & who the appointment is with are required.\nPlease enter a valid time, date, appointment type, and name and try again.");			
+						System.err.println(status);
+						broadcastMessage(status,getClientNum());
+	    			}
+	    			
 	    			
 	    		case "authenticate":
 	    			// for Log In
@@ -314,7 +340,7 @@ public class RezServer extends JFrame {
 
 	    			
 
-	    			if ((!email.equals("") && !pwd.equals(""))) {
+	    			if ((!email.equals("") || !pwd.equals(""))) {
 		    			encryptedPwd = db.getEncryptedPasswordFromDB(email);
 		    			System.out.println("[encryptedPwd]="+encryptedPwd);
 		

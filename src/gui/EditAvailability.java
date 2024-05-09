@@ -50,7 +50,6 @@ public class EditAvailability extends JPanel {
     	title.setFont(h1);
     	subtitle.setFont(h4);
 
-    	
         JLabel timeLabel = new JLabel("Time:");
         JLabel dateLabel = new JLabel("Date:");
         JLabel aptTypeLabel = new JLabel("Appointment Type:");
@@ -181,19 +180,71 @@ public class EditAvailability extends JPanel {
         return this;
     }
     
-    private void handleSubmitButton() {
-    	System.out.println("Submit Button Pressed");
-//    	String name = this.timeField.getText();
-//    	String email = this.dateField.getText();
-//    	char[] passwordChars = this.appointmentType.getPassword();
-//        String pwd = new String(passwordChars);
-//        
-//        System.out.println("Submit button pressed.\n");
-//        // Send info the server
-//
-//        Communicator c = Communicator.getCommunicator();
-//        c.addUser(name,email,pwd);
-//        clearFields();
+    
+    
+    public JTextField getTimeField() {
+		return timeField;
+	}
+
+	public void setTimeField(JTextField timeField) {
+		this.timeField = timeField;
+	}
+
+	public JTextField getDateField() {
+		return dateField;
+	}
+
+	public void setDateField(JTextField dateField) {
+		this.dateField = dateField;
+	}
+
+	public JTextField getAppointmentType() {
+		return appointmentType;
+	}
+
+	public void setAppointmentType(JTextField appointmentType) {
+		this.appointmentType = appointmentType;
+	}
+
+	public JTextField getWho() {
+		return who;
+	}
+
+	public void setWho(JTextField who) {
+		this.who = who;
+	}
+
+	public JTextField getNotes() {
+		return notes;
+	}
+
+	public void setNotes(JTextField notes) {
+		this.notes = notes;
+	}
+
+	public JTextField getShortDescription() {
+		return shortDescription;
+	}
+
+	public void setShortDescription(JTextField shortDescription) {
+		this.shortDescription = shortDescription;
+	}
+
+	private void handleSubmitButton() {
+    	System.out.println("EditAvailability: Submit Button Pressed");
+    	
+    	String time = this.timeField.getText();
+    	String date = this.dateField.getText();
+    	String aptType = this.appointmentType.getText();
+    	String who = this.who.getText();
+    	String notes = this.notes.getText();
+    	String shortDesc = this.shortDescription.getText();
+    	    
+        // Send info the server
+
+        Communicator c = Communicator.getCommunicator();
+        c.addAvailability(time, date, aptType, who, notes, shortDesc);
+        clearFields();
     }
     
     
@@ -201,6 +252,9 @@ public class EditAvailability extends JPanel {
     	this.timeField.setText("");
     	this.dateField.setText("");
     	this.appointmentType.setText("");
+    	this.who.setText("");
+    	this.notes.setText("");
+    	this.shortDescription.setText("");
     }
     
     public void setSavedState(JPanel toSave) {

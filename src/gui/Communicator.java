@@ -67,6 +67,21 @@ public class Communicator {
         // add the user to the Database
 	}
 	
+	public void addAvailability(String time, String date, String appointmentType, String who, String notes, String shortDesc) {
+		System.out.println("Formatting string.\n");
+        String submittedStr = "addAvailability," // action called by Server
+        					  +  time + ","
+        					  +  date + ","
+        					  +  appointmentType + ","
+        					  +  who + ","
+        					  +  notes + ","
+        					  +  shortDesc + "\n";
+        System.out.println("[addAvailability]="+submittedStr);
+        
+        sendMessageToServer(submittedStr);
+        // add the user to the Database
+	}
+	
 	public void authenticate(String email, String pwd) {
 		System.out.println("Formatting string.\n");
         String submittedStr = "authenticate," // action called by Server
