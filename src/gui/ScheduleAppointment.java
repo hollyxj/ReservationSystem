@@ -34,7 +34,7 @@ import ca.odell.issuezilla.Issue;
 
 public class ScheduleAppointment extends JPanel implements TableFormat<Appointment>  {
 	/**
-	 * Display a frame for browsing issues.
+	 * Display a frame for browsing appointment availability.
 	 */
 	
 	/** event list that hosts the issues */

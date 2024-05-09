@@ -329,6 +329,7 @@ public class RezServer extends JFrame {
 						broadcastMessage(status,getClientNum());
 	    			}
 	    			
+	    			break; // end addAvailability
 	    			
 	    		case "authenticate":
 	    			// for Log In

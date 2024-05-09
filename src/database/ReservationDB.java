@@ -26,20 +26,18 @@ public class ReservationDB {
 	    pstmt.executeUpdate();
 	}
 	
-	public void addAvailabilityToDB(String time, String date, String appointmentType, String who, String notes, String shortDesc) throws SQLException {
-	    PreparedStatement pstmt = connection.prepareStatement("insert into availability (time, date, appointmentType, who, notes, shortDesc) values (?, ?, ?, ?, ?, ?)");
+	public void addAvailabilityToDB(String time, String date, String appointmentType, String who, String notes, String shortDescription) throws SQLException {
+	    PreparedStatement pstmt = connection.prepareStatement("insert into availability (time, date, appointmentType, who, notes, shortDescription) values (?, ?, ?, ?, ?, ?)");
 	    
 	    pstmt.setString(1, time);
 	    pstmt.setString(2, date);
 	    pstmt.setString(3, appointmentType);
 	    pstmt.setString(4, who);
 	    pstmt.setString(5, notes);
-	    pstmt.setString(6, shortDesc);
+	    pstmt.setString(6, shortDescription);
 	    
 	    pstmt.executeUpdate();
 	}
-	
-
 	
 	
 	public void createDBTable(String tableName, String sql) {

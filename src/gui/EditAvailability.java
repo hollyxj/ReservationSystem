@@ -33,6 +33,7 @@ public class EditAvailability extends JPanel {
 	
     Font h1 = new Font("Arial", Font.BOLD, 24); 
     Font h2 = new Font("Arial", Font.BOLD, 18);
+    Font h3 = new Font("Arial", Font.BOLD, 16);
     Font h4 = new Font("Arial", Font.ITALIC, 16);
     Font field = new Font("Arial", Font.PLAIN, 16);
 
@@ -83,6 +84,10 @@ public class EditAvailability extends JPanel {
         who.setFont(field);
         notes.setFont(field);
         shortDescription.setFont(field);
+        
+        
+        
+
 
         // Panel configurations
         JPanel gridPanel = new JPanel();
@@ -122,6 +127,36 @@ public class EditAvailability extends JPanel {
         descFlow.add(shortDescription);
         
         
+        
+        JButton submitButton = new JButton("Submit");
+        submitButton.setFont(h3);
+        submitButton.addActionListener(e -> {
+        	 try {
+				handleSubmitButton();
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+        });
+        
+        JButton clearButton = new JButton("Clear");
+        clearButton.setFont(h3);
+        clearButton.addActionListener(e -> {
+        	 try {
+				clearFields();
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+        });
+
+        
+        JPanel buttonFlow = new JPanel();
+        buttonFlow.setLayout(new FlowLayout());
+        buttonFlow.add(submitButton);
+        buttonFlow.add(clearButton);
+        
+        
         gridPanel.add(title); // 1
         gridPanel.add(subtitle); // 2
         
@@ -131,50 +166,15 @@ public class EditAvailability extends JPanel {
         gridPanel.add(whoFlow); // 5
         gridPanel.add(notesFlow); // 6
         gridPanel.add(descFlow); // 7
-
-//        // Press the "Tab" key to go to the next field functionality
-//        this.timeField.addKeyListener(new KeyListener() {
-//            JTextField emlField = getEmailField();
-//
-//            @Override
-//            public void keyTyped(KeyEvent e) {
-//            }
-//
-//            @Override
-//            public void keyPressed(KeyEvent e) {
-//                if (e.getKeyCode() == KeyEvent.VK_TAB) {
-//                    emlField.requestFocusInWindow(); // Move focus to textField2
-//                }
-//            }
-//
-//            @Override
-//            public void keyReleased(KeyEvent e) {
-//            }
-//        });
-
-  
-        JButton submitButton = new JButton("Submit");
-
-        submitButton.addActionListener(e -> {
-        	 try {
-				handleSubmitButton();
-			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-        });
-
-        JPanel southPanel = new JPanel();
-        southPanel.setLayout(new FlowLayout());
-        southPanel.add(submitButton);
+        gridPanel.add(buttonFlow);
+ 
 
         JPanel megaPanel = new JPanel();
         megaPanel.setLayout(new FlowLayout());
         megaPanel.add(gridPanel);
 
         setLayout(new BorderLayout());
-        add(megaPanel, BorderLayout.CENTER);
-        add(southPanel, BorderLayout.SOUTH);
+        add(megaPanel);
 
         setSavedState(this);
         return this;
