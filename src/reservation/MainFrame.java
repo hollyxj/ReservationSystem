@@ -4,12 +4,14 @@ import server.*;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.image.BufferedImage;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.Socket;
+import java.net.URL;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.Key;
@@ -20,6 +22,8 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -98,11 +102,32 @@ public class MainFrame extends JFrame {
         menuBar.add(menu);
         setJMenuBar(menuBar);
 
+        
+        
+        // Load the image icon from the "resources" folder
+//        URL imageUrl = MainFrame.class.getResource("/resources/Rezerve2.jpg");
+//        if (imageUrl != null) {
+//            ImageIcon icon = new ImageIcon(imageUrl);
+//            setIconImage(icon.getImage());
+//        } else {
+//            System.err.println("Error loading image icon.");
+//        }
+      
+//        ImageIcon icon = new ImageIcon("/resources/Rezerve2.jpg");
+        String cwd = System.getProperty("user.dir");
+        System.out.println("Current Working Directory: " + cwd);
+        // Prints "Current Working Directory: /Users/hollyjordan/git/ReservationSystem"
+        
+        // Set the custom icon for the JFrame
+//        setIconImage(icon.getImage());
+        
         // Set frame properties
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        pack();
         setSize(400, 300);
         setLocationRelativeTo(null);
         setVisible(true);
+   
 //        setAlwaysOnTop(true);
     }
     
@@ -132,7 +157,7 @@ public class MainFrame extends JFrame {
         repaint();
     }
     
-    private void switchToWelcome() {
+    public void switchToWelcome() {
         setContentPane(this.welcomePage.getSavedState());
         validate();
         repaint();
@@ -144,6 +169,16 @@ public class MainFrame extends JFrame {
         repaint();
     }
         
+    public void switchTo(String page) {
+    	switch(page) {
+    		case "welcome":
+    			switchToWelcome();
+    			break;
+    			
+    		default:
+    			break;
+    	} // end switch
+     }
     
     public static void main(String[] args) {
     	MainFrame mf = new MainFrame();

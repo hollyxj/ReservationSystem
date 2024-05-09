@@ -18,12 +18,13 @@ public class ScheduleAppointment extends JPanel {
         // Add components to the panel
         JLabel scheduleLabel = new JLabel("Schedule Appointment GUI");
         add(scheduleLabel, BorderLayout.CENTER);
+        
+        
+        
         // Add other components as needed
         setSavedState(this);
         return this;
-        
     }
-    
     
     public void setSavedState(JPanel toSave) {
     	this.savedState = toSave;

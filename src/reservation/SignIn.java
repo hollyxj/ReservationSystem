@@ -103,6 +103,9 @@ public class SignIn extends JPanel {
         Communicator c = Communicator.getCommunicator();
         c.authenticate(email,pwd);
         clearFields();
+//        MainFrame.switchTo("welcome");
+        
+//        MainFrame.switchToWelcome();
     }
     
     public void clearFields() {
