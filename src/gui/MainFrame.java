@@ -42,7 +42,8 @@ public class MainFrame extends JFrame {
 	private LogIn logInPage;
     private Welcome welcomePage;
     private ScheduleAppointment schedulePage;
-
+    private EditAvailability editAvailPage;
+    
     // TM:   ™
     public MainFrame() {
         super("Rezerve™");
@@ -54,6 +55,7 @@ public class MainFrame extends JFrame {
         this.logInPage = new LogIn();
         this.welcomePage = new Welcome();
         this.schedulePage = new ScheduleAppointment();
+        this.editAvailPage = new EditAvailability();
 
         // Initialize the Sign In page as the initial view
         setContentPane(this.welcomePage);
@@ -63,6 +65,7 @@ public class MainFrame extends JFrame {
         JMenuItem signUpItem = new JMenuItem("Sign Up");
         JMenuItem signInItem = new JMenuItem("Log In");
         JMenuItem scheduleItem = new JMenuItem("Schedule Appointment");
+        JMenuItem editItem = new JMenuItem("Edit Availability");
         JMenuItem exitItem = new JMenuItem("Exit");
 
         // Implement menu functionality
@@ -87,6 +90,12 @@ public class MainFrame extends JFrame {
         	this.schedulePage.setSavedState((JPanel) getContentPane());
 
         });
+        editItem.addActionListener(e -> {
+        	// Schedule appointment page
+        	switchToEditAvailability();
+        	this.schedulePage.setSavedState((JPanel) getContentPane());
+
+        });
         exitItem.addActionListener(e -> System.exit(0)); // Exit the application
         
         
@@ -97,6 +106,7 @@ public class MainFrame extends JFrame {
         menu.add(signUpItem);
         menu.add(signInItem);
         menu.add(scheduleItem);
+        menu.add(editItem);
         menu.addSeparator();
         menu.add(exitItem);
         menuBar.add(menu);
@@ -168,6 +178,12 @@ public class MainFrame extends JFrame {
         repaint();
     }
         
+    private void switchToEditAvailability() {
+    	setContentPane(this.editAvailPage.getSavedState());
+        validate();
+        repaint();
+    }
+    
     public void switchTo(String page) {
     	switch(page) {
     		case "welcome":

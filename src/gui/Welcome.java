@@ -15,6 +15,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ResourceBundle;
+
+import javax.swing.*;
+import java.awt.*;
 
 public class Welcome extends JPanel {
 
@@ -53,27 +57,24 @@ public class Welcome extends JPanel {
 //            e.printStackTrace();
 //        }
 
-    	String currentDirectory = System.getProperty("user.dir");
-        System.out.println("[Welcome] Current Working Directory: " + currentDirectory);
-    	
-    	
-        // Print debug information about the resource loading
-        URL imageUrl = getClass().getResource("/images/Server.jpg");
-        System.out.println("Image URL: " + imageUrl); // Debug line
+//    	String currentDirectory = System.getProperty("user.dir");
+//        System.out.println("[Welcome] Current Working Directory: " + currentDirectory);
+//    	
+//    	
+//        ResourceBundle bundle = ResourceBundle.getBundle("image");
+//
+//        // Get the image path from the ResourceBundle
+//        String imagePath = bundle.getString("reserve3");
+//
+//        // Load the image
+////        ImageIcon icon = new ImageIcon(ClassLoader.getSystemResource(imagePath));
+//        ImageIcon icon = new ImageIcon(getClass().getResource(imagePath));
+//
+//        // Create a JLabel to display the image
+//        JLabel label = new JLabel(icon);
+//
+//        add(label, BorderLayout.CENTER);
 
-        if (imageUrl != null) {
-            try {
-                BufferedImage img = ImageIO.read(imageUrl);
-                ImageIcon icon = new ImageIcon(img);
-                JLabel imageLabel = new JLabel(icon);
-                flowPanel.add(imageLabel, BorderLayout.CENTER);
-            } catch (IOException e) {
-                System.err.println("Error loading image icon: " + e.getMessage());
-            }
-        } else {
-            System.err.println("Error loading image icon. Image not found.");
-        }
-        
     	
         add(flowPanel, BorderLayout.NORTH);
         setSavedState(this);
