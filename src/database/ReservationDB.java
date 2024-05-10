@@ -13,7 +13,7 @@ public class ReservationDB {
 		System.out.println("In rez db constructor");
 
 		// Create users table in Database
-		String sqlUsers = "CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, email TEXT, password TEXT, is_admin BOOLEAN)";
+		String sqlUsers = "CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, email TEXT, password TEXT, is_admin BOOLEAN, appointments TEXT)";
 		createDBTable("users", sqlUsers);
 		
 		// Create users table in Database
@@ -21,15 +21,29 @@ public class ReservationDB {
 		createDBTable("availability", sqlAvail);
 	}
 	
-	public void addUserToDB(String username, String email, String password, Boolean isAdmin) throws SQLException {
-	    PreparedStatement pstmt = connection.prepareStatement("insert into users (username, email, password, is_admin) values (?, ?, ?, ?)");
+	public void addUserToDB(String username, String email, String password, Boolean isAdmin, String appointments) throws SQLException {
+	    PreparedStatement pstmt = connection.prepareStatement("insert into users (username, email, password, is_admin, appointments) values (?, ?, ?, ?, ?)");
 	    pstmt.setString(1, username);
 	    pstmt.setString(2, email);
 	    pstmt.setString(3, password);
 	    pstmt.setBoolean(4, isAdmin);
+	    pstmt.setString(5, appointments);
 	    
 	    pstmt.executeUpdate();
 	}
+	
+	public void updateAppointmentsColumn(String userEmail, String appointmentID) {
+        try {
+            // Update the "appointments" column of the user in the "users" table
+            String updateQuery = "UPDATE users SET appointments = IFNULL(appointments, '') || ',' || ? WHERE email = ?";
+            PreparedStatement statement = connection.prepareStatement(updateQuery);
+            statement.setString(1, appointmentID);
+            statement.setString(2, userEmail);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Error updating appointments column: " + e.getMessage());
+        }
+    }
 	
 	public void addAvailabilityToDB(String time, String date, String appointmentType, String who, String notes, String shortDescription) throws SQLException {
 	    PreparedStatement pstmt = connection.prepareStatement("insert into availability (time, date, appointmentType, who, notes, shortDescription) values (?, ?, ?, ?, ?, ?)");
@@ -73,17 +87,38 @@ public class ReservationDB {
 	}
 	
 	public String getEncryptedPasswordFromDB(String email) throws SQLException {
-	    PreparedStatement pstmt = connection.prepareStatement("select password from users where email=?");
+        System.out.println("email="+email);
+
+		PreparedStatement pstmt = connection.prepareStatement("select password from users where email=?");
 	    pstmt.setString(1, email);
         ResultSet resultSet = pstmt.executeQuery();
 
         if (resultSet.next()) {
             String hashedPassword = resultSet.getString("password");
+            System.out.println("---------------------------");
+            System.out.println("hashedPassword="+hashedPassword);
+
     	    // return encrypted password
     	    return hashedPassword;
         } 
         return null;
 	}
+	
+	 public String getAppointmentsForUser(String userEmail) {
+	        try {
+	            // Retrieve appointments for the user from the "users" table
+	            String selectQuery = "SELECT appointments FROM users WHERE email = ?";
+	            PreparedStatement statement = connection.prepareStatement(selectQuery);
+	            statement.setString(1, userEmail);
+	            ResultSet resultSet = statement.executeQuery();
+	            if (resultSet.next()) {
+	                return resultSet.getString("appointments");
+	            }
+	        } catch (SQLException e) {
+	            System.err.println("Error retrieving appointments for user: " + e.getMessage());
+	        }
+	        return null;
+	    }
 	
 	public void closeDB() throws SQLException {
 		if (this.connection != null) {

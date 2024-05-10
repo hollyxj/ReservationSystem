@@ -6,6 +6,7 @@ import gui.Communicator;
 import gui.MainFrame;
 
 import java.awt.BorderLayout;
+import java.awt.LayoutManager;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.EOFException;
@@ -48,7 +49,12 @@ public class RezServer extends JFrame {
 	private int clientNum = 0;        // Create a HashMap with Integer keys and DataOutputStream values
     HashMap<Integer, DataOutputStream> clientMap = new HashMap<>();
     HashMap<Integer, Key> clientKeys = new HashMap<>();
+    private static RezServer instance;
+
     
+	private static String signedInName;
+	private static String signedInEmail;
+    private static Boolean userIsLoggedIn;
     private ReservationDB db = null;
 
 	public RezServer() {
@@ -284,6 +290,8 @@ public class RezServer extends JFrame {
     	String email = null;
     	String pwd = null;
     	String admin = null;
+    	String appointmentID = null;
+    	String appointments = null;
     	String encryptedPwd = null;
     	String decryptedPwd = null;
     	String msg = null;
@@ -307,6 +315,8 @@ public class RezServer extends JFrame {
 	    			pwd = parts[3];    		
 	    			admin = parts[4];
 	    			Boolean isAdmin;
+	    			appointments = parts[5];
+	    			
 	    			if (admin.equals("true")) {
 	    				isAdmin = true;
 	    			} else {
@@ -324,7 +334,7 @@ public class RezServer extends JFrame {
 		    			System.out.println("[encryptedPwd]="+encryptedPwd);
 
 		    			// Send to DB
-		    			db.addUserToDB(name, email, encryptedPwd, isAdmin); // send encrypted password
+		    			db.addUserToDB(name, email, encryptedPwd, isAdmin, appointments); // send encrypted password
 		    		
 		    			status = generateAlertStatus("Account created!");			
 						System.out.println(status);
@@ -390,6 +400,16 @@ public class RezServer extends JFrame {
 	    			}	
     				break; // end case authenticate
     			// ********************************************************
+	    			
+    				
+	    		case "updateAppointmentsColumn":
+	    			email = parts[1];
+	    			appointmentID = parts[2];
+	    			
+	    			db.updateAppointmentsColumn(email, appointmentID);
+	    			
+	    			break; // end case updateAppointmentsColumn
+	    		// ********************************************************	
 	    			
 	    		case "addAvailability":
 	    			System.out.println("In case addAvailability");
@@ -541,6 +561,15 @@ public class RezServer extends JFrame {
 		}
     }
     
+    public void sendLoggedInUserInfo() {
+    	String status = "getLoggedInUserInfo," +
+						getSignedInName() + "," +
+    					getSignedInEmail() + "," +
+    					getUserIsLoggedIn();
+
+    	broadcastMessage(status, getClientNum());
+    }
+
 	private String generateErrorStatus(String msg) {
 		return "error,"+msg;
 	}
@@ -552,15 +581,57 @@ public class RezServer extends JFrame {
 	private String generateAlertStatus(String msg) {
 		return "alert,"+msg;
 	}
-
     
-    public int getClientNum() {
+	
+	public void setUserIsLoggedIn(Boolean isLoggedIn) {
+		if (isLoggedIn) {
+	        userIsLoggedIn = true;
+		} else {
+			 userIsLoggedIn = false;
+		}
+	}
+
+
+	public Boolean getUserIsLoggedIn() {
+	    return userIsLoggedIn;
+	}
+	
+	
+	public String getSignedInName() {
+		return signedInName;
+	}
+	
+	
+	public void setSignedInName(String name) {
+		 signedInName = name;
+	}
+	
+	
+	public String getSignedInEmail() {
+		return signedInEmail;
+	}
+	
+	
+	public void setSignedInEmail(String email) {
+		signedInEmail = email;
+	}
+
+	public int getClientNum() {
     	return this.clientNum;
+    }
+    
+    public static RezServer getInstance() {
+        if (instance == null) {
+            instance = new RezServer();
+        }
+        return instance;
     }
     
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(() -> {
-			RezServer server = new RezServer(); // Create an instance of Server on the Event Dispatch Thread
+			RezServer server = getInstance(); // Create an instance of Server on the Event Dispatch Thread
 		});
-	}	
+	}
+
+
 }

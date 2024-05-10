@@ -14,6 +14,7 @@ public class LogIn extends JPanel {
 	private JPasswordField passwordField = new JPasswordField();
 	private JCheckBox showPasswordCheckbox = new JCheckBox();
 	private JPanel savedState;
+	private String signedInEmail;
 	
     Font h1 = new Font("Arial", Font.BOLD, 24); 
     Font h2 = new Font("Arial", Font.BOLD, 18);
@@ -132,10 +133,10 @@ public class LogIn extends JPanel {
 
         Communicator c = Communicator.getCommunicator();
         c.authenticate(email,pwd);
-//        clearFields();
-//        MainFrame.switchTo("welcome");
-        
-//        MainFrame.switchToWelcome();
+    }
+    
+    public String getLoggedInEmail() {
+    	return this.signedInEmail;
     }
     
     public void clearFields() {

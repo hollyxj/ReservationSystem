@@ -43,8 +43,6 @@ import appointment.AppointmentTextFilterator;
 import appointment.AppointmentToUserList;
 import ca.odell.glazedlists.gui.TableFormat;
 import ca.odell.issuezilla.Issue;
-//import com.publicobject.misc.Exceptions;
-//import com.publicobject.misc.Throbber;
 
 
 // SOURCE: https://glazedlists.github.io/glazedlists-tutorial/#hello-world
@@ -59,11 +57,19 @@ public class ScheduleAppointment extends JPanel implements TableFormat<Appointme
 	private JPanel savedState;
 	private EventList<Appointment> appointmentEventList = new BasicEventList<>(); 
 	private JTable appointmentsJTable;
+    private String userEmail; // assuming userEmail is a field in the class
 
-	public ScheduleAppointment() {
-		initGUI();
-	}
-	
+
+	// Constructor
+    public ScheduleAppointment(String userEmail) {
+        this.userEmail = userEmail;
+        initGUI();
+    }
+    
+    // Getter method for userEmail
+    public String getUserEmail() {
+        return userEmail;
+    }
 	public JPanel initGUI()  {
 		SortedList<Appointment> sortedAppointments = new SortedList<>(appointmentEventList, new AppointmentComparator());
 		
@@ -170,6 +176,8 @@ public class ScheduleAppointment extends JPanel implements TableFormat<Appointme
 	        e.printStackTrace();
 	    }
 	}
+	
+	
 	public void handleSelectButton() {
 	    System.out.println("ScheduleAppointment: Select button pressed.");
 
@@ -219,9 +227,26 @@ public class ScheduleAppointment extends JPanel implements TableFormat<Appointme
 
 	        // Check user's choice
 	        if (option == JOptionPane.YES_OPTION) {
-	            // Add the appointment data to MyAppointments panel
-	            String[] rowData = {time, date, appointmentType, who, notes, shortDescription};
-	            ((MainFrame) SwingUtilities.getWindowAncestor(this)).getMyAppointmentsPanel().addAppointment(rowData);
+//	            // Add the appointment data to MyAppointments panel
+//	            String[] rowData = {time, date, appointmentType, who, notes, shortDescription};
+//	            ((MainFrame) SwingUtilities.getWindowAncestor(this)).getMyAppointmentsPanel().addAppointment(rowData);
+//	        
+	            // Get the selected appointment ID
+	            Integer idNum = selectedAppointment.getId(); // Assuming there's a method to get the ID
+	            String appointmentID = Integer.toString(idNum);
+	            
+	            // Update the "users" table with the appointment ID
+	            String userEmail = getUserEmail(); // Method to get the current logged-in user's email
+
+	            Communicator c = Communicator.getCommunicator();
+	            c.updateAppointmentsColumn(userEmail, appointmentID, () -> {
+	                // Callback for UI update
+	                SwingUtilities.invokeLater(() -> {
+	                    String[] rowData = {time, date, appointmentType, who, notes, shortDescription};
+	                    ((MainFrame) SwingUtilities.getWindowAncestor(this)).getMyAppointmentsPanel().addAppointment(rowData);
+	                });
+	            });
+	        
 	        } else {
 	            System.out.println("User clicked Go Back.");
 	        }
@@ -232,6 +257,8 @@ public class ScheduleAppointment extends JPanel implements TableFormat<Appointme
 	    } else {
 	        System.out.println("No appointment selected.");
 	    }
+	    
+	  
 	}
 
 	

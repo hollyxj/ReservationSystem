@@ -4,6 +4,8 @@ import server.*;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -46,22 +48,30 @@ public class MainFrame extends JFrame {
     private MyAppointments myAppointmentsPage;
 
     
-	private String signedInName;
+	private static String signedInName;
+	private static String signedInEmail;
+    private static Boolean userIsLoggedIn = false;
+
 	private ScheduleAppointment scheduleAppointmentPanel;
+    private MyAppointments myAppointments;
+    
+    private static JMenuBar menuBar = new JMenuBar();
+    private static JMenu menu = new JMenu("Menu");
     
     // TM:   ™
     public MainFrame() {
         super("Rezerve™");
 		createGUI();
+		
+
     }
+    
     
     private void createGUI() {
     	this.signUpPage = new SignUp();
         this.logInPage = new LogIn();
         this.welcomePage = new Welcome();
-        this.schedulePage = new ScheduleAppointment();
         this.editAvailPage = new EditAvailability();
-        this.myAppointmentsPage = new MyAppointments();
 
         // Initialize the Sign In page as the initial view
         setContentPane(this.welcomePage);
@@ -74,6 +84,10 @@ public class MainFrame extends JFrame {
         JMenuItem myAppointmentsItem = new JMenuItem("My Appointments");
         JMenuItem editItem = new JMenuItem("Edit Availability");
         JMenuItem exitItem = new JMenuItem("Exit");
+        
+        // Create menu bar
+        menuBar = new JMenuBar();
+        menu = new JMenu("Menu");
 
         // Implement menu functionality
         signUpItem.addActionListener(e -> {
@@ -103,8 +117,6 @@ public class MainFrame extends JFrame {
         	this.editAvailPage.setSavedState((JPanel) getContentPane());
 
         });
-        
-        
         myAppointmentsItem.addActionListener(e -> {
         	// Schedule appointment page
         	switchToMyAppointments();
@@ -114,37 +126,49 @@ public class MainFrame extends JFrame {
         exitItem.addActionListener(e -> System.exit(0)); // Exit the application
         
         
-        // Create menu bar
-        JMenuBar menuBar = new JMenuBar();
-        JMenu menu = new JMenu("Menu");
+
+        // Check if the user is logged in to decide whether to add My Appointments to the menu
+        if (userIsLoggedIn) {
+            // get email of 
+            String signedInEmail = getSignedInEmail();
+            this.schedulePage = new ScheduleAppointment(signedInEmail);
+            this.myAppointmentsPage = new MyAppointments();
+            menu.add(scheduleItem);
+            menu.add(myAppointmentsItem);
+            myAppointments = new MyAppointments(RezServer.getInstance()); // Assuming RezServer has a getInstance method
+
+        }
+        
+        // if user is admin
+        menu.add(editItem);
+        
+        
+
         menu.add(welcomeItem);
         menu.add(signUpItem);
         menu.add(signInItem);
-        menu.add(scheduleItem);
-        menu.add(myAppointmentsItem);
-        menu.add(editItem);
+//        menu.add(myAppointmentsItem);
         menu.addSeparator();
         menu.add(exitItem);
         menuBar.add(menu);
         setJMenuBar(menuBar);
         
-        
-        // Load the image icon from the "resources" folder
-//        URL imageUrl = MainFrame.class.getResource("/resources/Rezerve2.jpg");
-//        if (imageUrl != null) {
-//            ImageIcon icon = new ImageIcon(imageUrl);
-//            setIconImage(icon.getImage());
-//        } else {
-//            System.err.println("Error loading image icon.");
-//        }
-      
-//        ImageIcon icon = new ImageIcon("/resources/Rezerve2.jpg");
+        // Prints "Current Working Directory: /Users/hollyjordan/git/ReservationSystem"
         String cwd = System.getProperty("user.dir");
         System.out.println("Current Working Directory: " + cwd);
         // Prints "Current Working Directory: /Users/hollyjordan/git/ReservationSystem"
         
-        // Set the custom icon for the JFrame
-//        setIconImage(icon.getImage());
+
+        JMenuItem scheduleMenuItem = new JMenuItem("Schedule Appointment");
+        scheduleMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Code to handle scheduling appointments and updating MyAppointments
+                String userEmail = "user@example.com"; // Get the user's email (replace with actual logic)
+                String appointmentID = "123"; // Get the selected appointment ID
+                myAppointments.updateAppointmentsColumn(userEmail, appointmentID);
+            }
+        });
         
         // Set frame properties
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -152,12 +176,51 @@ public class MainFrame extends JFrame {
         setSize(800, 600);
         setLocationRelativeTo(null);
         setVisible(true);
-   
-//        setAlwaysOnTop(true);
+       }
+    
+//    public void setLoggedInUser(String email) {
+//    	setUserIsLoggedIn(true);
+//    	System.out.println("MainFrame:[userIsLoggedIn]="+getUserIsLoggedIn());
+//    	
+//    	System.out.println("MainFrame:[]="+getUserIsLoggedIn());
+//    	setSignedInEmail(email);
+//    	
+//    }
+
+	public static void setUserIsLoggedIn(Boolean isLoggedIn) {
+    	if (isLoggedIn) {
+            userIsLoggedIn = true;
+    	} else {
+    		 userIsLoggedIn = false;
+    	}
+
+    }
+    public Boolean getUserIsLoggedIn() {
+        return userIsLoggedIn;
     }
     
+
+    public String getSignedInName() {
+		return signedInName;
+	}
+
+
+	public static void setSignedInName(String name) {
+		 signedInName = name;
+	}
+
+
+	public String getSignedInEmail() {
+		return signedInEmail;
+	}
+
+
+	public static void setSignedInEmail(String email) {
+		signedInEmail = email;
+	}
+
+    
     public static void sendAlert(String msg) {
-//		JOptionPane.showMessageDialog(null, msg); //, "Alert", JOptionPane.INFORMATION_MESSAGE);
 		SwingUtilities.invokeLater(() -> {
 			JOptionPane.showMessageDialog(null, msg, "Alert", JOptionPane.INFORMATION_MESSAGE);
 		});
@@ -167,14 +230,6 @@ public class MainFrame extends JFrame {
 		SwingUtilities.invokeLater(() -> {
 			JOptionPane.showMessageDialog(null, msg, "Error", JOptionPane.ERROR_MESSAGE);
 		});
-    }
-    
-    public void setName(String name) {
-    	this.signedInName = name;
-    }
-    
-    public String getName() {
-    	return this.signedInName;
     }
     
     private void switchToSignIn() {
@@ -210,19 +265,6 @@ public class MainFrame extends JFrame {
     public MyAppointments getMyAppointmentsPanel() {
         return myAppointmentsPage;
     }
-//    
-//	public void switchToMyAppointments() {
-//        setContentPane(this.myAppointmentsPage.getSavedState()); // Switch to MyAppointments panel
-//        validate();
-//        repaint();
-//    }
-//    public void switchToMyAppointments() {
-//        MyAppointments myAppointmentsPanel = (MyAppointments) this.myAppointmentsPage.getSavedState();
-//        myAppointmentsPanel.loadAppointmentsFromSchedule(myAppoi.getAppointmentEventList());
-//        setContentPane(myAppointmentsPanel); // Switch to MyAppointments panel
-//        validate();
-//        repaint();
-//    }
     
     public void switchToMyAppointments() {
         // Get the content pane
@@ -250,7 +292,6 @@ public class MainFrame extends JFrame {
         }
     }
 
-
     public void switchTo(String page) {
     	
     	switch(page) {
@@ -268,9 +309,4 @@ public class MainFrame extends JFrame {
 
     	MainFrame mf = new MainFrame();
     }
-
-
-	
-
-
 }

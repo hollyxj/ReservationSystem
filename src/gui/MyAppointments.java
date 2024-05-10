@@ -1,6 +1,9 @@
 package gui;
 
 import javax.swing.*;
+import database.*;
+import gui.Communicator.UpdateCallback;
+
 import javax.swing.table.DefaultTableModel;
 
 import ca.odell.glazedlists.BasicEventList;
@@ -8,8 +11,10 @@ import ca.odell.glazedlists.EventList;
 import appointment.*;
 
 import java.awt.*;
+import server.RezServer;
 
-public class MyAppointments extends JPanel {
+
+public class MyAppointments extends JPanel implements UpdateCallback {
 
     private static final long serialVersionUID = 1L;
     private JPanel savedState;
@@ -17,6 +22,7 @@ public class MyAppointments extends JPanel {
     private DefaultTableModel tableModel;
     
     private EventList<Appointment> appointmentEventList = new BasicEventList<>();
+    private RezServer server;
 
 
     Font h1 = new Font("Arial", Font.BOLD, 24);
@@ -28,6 +34,10 @@ public class MyAppointments extends JPanel {
         // Default constructor
         super(new BorderLayout()); // Set the layout for the panel
         initGUI(); // Initialize the GUI components
+    }
+    
+    public MyAppointments(RezServer server) {
+        this.server = server;
     }
 
     public JPanel initGUI() {
@@ -52,6 +62,34 @@ public class MyAppointments extends JPanel {
         return this;
     }
     
+    
+        // Retrieve appointments for the current user
+//        String userEmail = getCurrentUserEmail(); // Method to get the current logged-in user's email
+//        DatabaseManager dbManager = new DatabaseManager();
+//        String appointmentIDs = dbManager.getAppointmentsForUser(userEmail);
+//        if (appointmentIDs != null) {
+//            String[] appointmentIDArray = appointmentIDs.split(",");
+//            for (String appointmentID : appointmentIDArray) {
+//                // Query the "appointments" table for each appointment ID and add them to the table
+//                Appointment appointment = dbManager.getAppointmentByID(appointmentID);
+//                if (appointment != null) {
+//                    String[] rowData = {appointment.getTime(), appointment.getDate(), appointment.getAppointmentType(),
+//                            appointment.getWho(), appointment.getNotes(), appointment.getShortDescription()};
+//                    addAppointment(rowData);
+//                }
+//            }
+//        }
+//
+//        dbManager.closeConnection();
+//        return this; // Return the panel
+    
+        
+        @Override
+    public void onUpdateSuccess() {
+        // Update UI after successful database update
+        initGUI();
+    }
+    
     public EventList<Appointment> getAppointmentEventList() {
         return appointmentEventList;
     }
@@ -72,5 +110,13 @@ public class MyAppointments extends JPanel {
     // Method to clear all appointments from the table
     public void clearAppointments() {
         tableModel.setRowCount(0);
+    }
+    
+    public String getAppointmentsForUser(String userEmail) {
+        return server.getDB().getAppointmentsForUser(userEmail);
+    }
+
+    public void updateAppointmentsColumn(String userEmail, String appointmentID) {
+        server.getDB().updateAppointmentsColumn(userEmail, appointmentID);
     }
 }

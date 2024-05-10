@@ -174,12 +174,14 @@ public class SignUp extends JPanel {
     	char[] passwordChars = this.passwordField.getPassword();
         String pwd = new String(passwordChars);
         Boolean isSelected = this.isAdminCheckbox.isSelected();
-        
+    	String appointments = null; // new accounts have no appointments
+
         System.out.println("Submit button pressed.\n");
         // Send info the server
         try {
         	Communicator c = Communicator.getCommunicator();
-            c.addUser(name,email,pwd,isSelected);
+        	System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%Pwd="+pwd);
+            c.addUser(name,email,pwd,isSelected,appointments);
             clearFields();
         } catch (Exception e) {
         	e.printStackTrace();

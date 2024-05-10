@@ -19,7 +19,9 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
 import javax.swing.SwingUtilities;
 
+import database.ReservationDB;
 import encryption.Encryption;
+import server.RezServer;
 
 public class Communicator {
     private static final String RSA = "RSA";
@@ -36,6 +38,7 @@ public class Communicator {
 	private static final int SLEEP_TIME = 1000;
 	private static String DOT = "\u2022";
     private static Communicator mycommunicator = null;
+    
     
     private Communicator() {
         try {
@@ -55,13 +58,26 @@ public class Communicator {
     	return mycommunicator;
     }
     
-	public void addUser(String name, String email, String pwd, Boolean isSelected) {
+    public String getAppointmentsForUser(String userEmail) {
+        // Call the corresponding method in ReservationDB to fetch appointments
+    	RezServer serverInstance = new RezServer();
+    	return serverInstance.getDB().getAppointmentsForUser(userEmail);
+    }
+
+    public void updateAppointmentsColumn(String userEmail, String appointmentID) {
+        // Call the corresponding method in ReservationDB to update appointments
+    	RezServer serverInstance = new RezServer();
+    	serverInstance.getDB().updateAppointmentsColumn(userEmail, appointmentID);
+    }
+    
+	public void addUser(String name, String email, String pwd, Boolean isSelected, String appointments) {
 		System.out.println("Formatting string.\n");
         String submittedStr = "addUser," // action called by Server
         					  +  name + ","
         					  +  email + ","
         					  +  pwd + ","
-        					  +  isSelected + "\n";
+        					  +  isSelected + ","
+		  					  +  appointments + "\n";
         System.out.println("Communicator:[addUser]="+submittedStr);
         
         sendMessageToServer(submittedStr);
@@ -98,12 +114,23 @@ public class Communicator {
 	}
 	
 	public void loadDBFromJSON(String filePath) {
-	    System.out.println("Formatting string.\n");
 	    String submittedStr = "loadDBFromJSON," + filePath + "\n";
 	    System.out.println("Communicator:[loadDBFromJSON]=" + submittedStr);
 	    sendMessageToServer(submittedStr);
 	}
+	
+	public interface UpdateCallback {
+	    void onUpdateSuccess();
+	}
 
+	public void updateAppointmentsColumn(String userEmail, String appointmentID, UpdateCallback callback) {
+	    String submittedStr = "updateAppointmentsColumn," 
+			    			+ userEmail + "," 
+			    			+ appointmentID + "\n";
+	    System.out.println("Communicator:[updateAppointmentsColumn]=" + submittedStr);
+	    sendMessageToServer(submittedStr);
+	    callback.onUpdateSuccess(); // Notify UI about the update
+	}
     public void sendMessageToServer(String msg) {
     	// Send the message to the server
     	DataOutputStream outStream = getHandshakeOutputStream();
@@ -266,6 +293,30 @@ public class Communicator {
 //	    			System.out.println("Communicator:[parseStatus]:[ignore]:"+status);
 //	    			break;
 	    		
+    			case "getLoggedInUserInfo":
+	    			System.out.println("Communicator:[loggedInEmail]:[alert]:"+status);
+					// MainFrame.sendAlert(status);
+	    			String name = parts[1];
+	    			String email = parts[2];
+	    			String loggedIn = parts[3];
+	    			Boolean userIsLoggedIn;
+	    			if (loggedIn.equals("true")) {
+	    		        userIsLoggedIn = true;
+	    			} else {
+	    				 userIsLoggedIn = false;
+	    			}
+	    			
+	    			// Name
+	    			MainFrame.setSignedInName(name);
+	    			// Email
+	    			MainFrame.setSignedInEmail(email);
+	    			// User is logged in
+	    			MainFrame.setUserIsLoggedIn(userIsLoggedIn);
+	    		
+
+//					MainFrame.setLoggedInUser(status);
+					
+    		
 	    		case "alert":
 	    			// Show an alert in the mainframe
 	    			System.out.println("Communicator:[parseStatus]:[alert]:"+status);
