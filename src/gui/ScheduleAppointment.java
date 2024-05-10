@@ -31,6 +31,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableModel;
 
 import com.google.gson.Gson;
@@ -87,6 +89,21 @@ public class ScheduleAppointment extends JPanel implements TableFormat<Appointme
 		DefaultEventListModel<String> usersListModel = eventListModelWithThreadProxyList(usersEventList);
 		JList<String> usersJList = new JList<>(usersListModel);
 		JScrollPane usersListScrollPane = new JScrollPane(usersJList);
+		
+		 // Add a ListSelectionListener to the JList
+        usersJList.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) { // Ensure the selection has stabilized
+                    JList<String> list = (JList<String>) e.getSource();
+                    String selectedValue = list.getSelectedValue();
+                    System.out.println("Selected user: " + selectedValue);
+                    filterEdit.setText(selectedValue);
+                    // Perform actions based on the selected user, e.g., filter appointments
+                    // handleUserSelection(selectedValue);
+                }
+            }
+        });
 	
 	    // create the panel
 		JPanel panel = new JPanel(new GridBagLayout());
