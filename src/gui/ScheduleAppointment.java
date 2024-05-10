@@ -1,5 +1,6 @@
 package gui;
 import ca.odell.glazedlists.*;
+import ca.odell.glazedlists.CollectionList.Model;
 import ca.odell.glazedlists.matchers.MatcherEditor;
 import ca.odell.glazedlists.swing.AdvancedTableModel;
 import ca.odell.glazedlists.swing.DefaultEventListModel;
@@ -30,6 +31,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import javax.swing.table.TableModel;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -68,7 +70,7 @@ public class ScheduleAppointment extends JPanel implements TableFormat<Appointme
 		JTextField filterEdit = new JTextField(10);
 		AppointmentTextFilterator filterator = new AppointmentTextFilterator();
 		MatcherEditor<Appointment> textMatcherEditor = new TextComponentMatcherEditor<>(filterEdit, filterator);
-		FilterList<Appointment> textFilteredIssues = new FilterList<>(sortedAppointments, textMatcherEditor);
+		FilterList<Appointment> textFilteredWho = new FilterList<>(sortedAppointments, textMatcherEditor);
 		
 		// derive the users list from the appointments list
 		EventList<String> usersNonUnique = new AppointmentToUserList(appointmentEventList);
@@ -76,7 +78,7 @@ public class ScheduleAppointment extends JPanel implements TableFormat<Appointme
 
 		// create the appointment table
 		AdvancedTableModel<Appointment> tableModel = eventTableModelWithThreadProxyList(
-												textFilteredIssues, new AppointmentTableFormat());
+												textFilteredWho, new AppointmentTableFormat());
 		this.appointmentsJTable = new JTable(tableModel);
 		TableComparatorChooser.install(appointmentsJTable, sortedAppointments, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE);
 		JScrollPane appointmentsTableScrollPane = new JScrollPane(appointmentsJTable);
@@ -103,7 +105,7 @@ public class ScheduleAppointment extends JPanel implements TableFormat<Appointme
         refreshButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-            	handleLoadButton();
+            	handleRefreshButton();
             }
         });
         
@@ -111,7 +113,7 @@ public class ScheduleAppointment extends JPanel implements TableFormat<Appointme
 		scheduleButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-            	handleSelectButton();
+            	handleScheduleButton();
             }
         });
         
@@ -128,7 +130,7 @@ public class ScheduleAppointment extends JPanel implements TableFormat<Appointme
         return this;
 	}
 	
-	public void handleLoadButton() {
+	public void handleRefreshButton() {
 	    System.out.println("ScheduleAppointment: Load button pressed.");
 
         Communicator c = Communicator.getCommunicator();
@@ -167,15 +169,31 @@ public class ScheduleAppointment extends JPanel implements TableFormat<Appointme
 	}
 	
 	
-	public void handleSelectButton() {
+	public void handleScheduleButton() {
 	    System.out.println("ScheduleAppointment: Select button pressed.");
 
 	    // Get the selected row index
-	    int selectedRowIndex = this.appointmentsJTable.getSelectedRow();
+	    int selectedRowNumber = this.appointmentsJTable.getSelectedRow();
+        System.out.println("selectedRowNumber "+ selectedRowNumber);
 
-	    if (selectedRowIndex != -1) { // Check if a row is selected
+
+	    if (selectedRowNumber != -1) { // Check if a row is selected
+	    	// Use the selected row number to get the ID number of the appointment in the selected row
+	    	
+	        int modelRow = this.appointmentsJTable.convertRowIndexToModel(selectedRowNumber);
+
+	        // Get the date value from the model
+	        Object idObject = this.appointmentsJTable.getModel().getValueAt(modelRow, 0);
+	        System.out.println("!!!!!!!!!!!!!!!!!!!idObject="+idObject);
+	        Integer idNum =  (Integer) idObject;
+	        idNum--;
+	        System.out.println("ID Number1 [idNum]= "+ idNum);
+
+//	        Object dateObject = this.appointmentsJTable.getModel().getValueAt(modelRow, 2);
+
+	    	
 	        // Get the appointment object from the selected row
-	        Appointment selectedAppointment = appointmentEventList.get(selectedRowIndex);
+	        Appointment selectedAppointment = appointmentEventList.get(idNum);
 
 	        // Extract the desired fields from the selected appointment
 	        String time = selectedAppointment.getTime();
@@ -208,8 +226,9 @@ public class ScheduleAppointment extends JPanel implements TableFormat<Appointme
 	        // Check user's choice
 	        if (option == JOptionPane.YES_OPTION) {
 	            // Get the selected appointment ID
-	            Integer idNum = selectedAppointment.getId();
 	            // Send to Main Frame
+		        System.out.println("ID Number2 [idNum]= "+ idNum);
+
 	            MainFrame.setCurrentAptID(idNum);
 
 	            String appointmentID = Integer.toString(idNum);
