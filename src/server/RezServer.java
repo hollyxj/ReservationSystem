@@ -382,11 +382,11 @@ public class RezServer extends JFrame {
 			    			
 							if (decryptedPwd.trim().equals(pwd.trim())) {
 								// Good - Valid credentials
-								status = generateAlertStatus("Login Successful!");
+								name = db.getNameFromEmail(email);
+								status = generateAlertStatus("Login Successful!\nWelcome, "+name+"!");
 								System.out.println(status);
 								broadcastMessage(status,getClientNum());
 								
-								name = db.getNameFromEmail(email);	
 								setSignedInName(name);
 								setSignedInEmail(email);
 								sendLoggedInUserInfo();
