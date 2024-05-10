@@ -282,6 +282,7 @@ public class RezServer extends JFrame {
     	String name = null;
     	String email = null;
     	String pwd = null;
+    	String admin = null;
     	String encryptedPwd = null;
     	String decryptedPwd = null;
     	String msg = null;
@@ -303,22 +304,75 @@ public class RezServer extends JFrame {
 	    			name = parts[1];
 	    			email = parts[2];
 	    			pwd = parts[3];    		
-	    			
-	    			
-	    			if (!name.equals("") || !email.equals("") || !pwd.equals("")) {
-		    			encryptedPwd = PKCS5.encrypt(pwd);
-		    			// Send to DB
-		    			db.addUserToDB(name, email, encryptedPwd); // send encrypted password
-		    			System.out.println("[encryptedPwd]="+encryptedPwd);
+	    			admin = parts[4];
+	    			Boolean isAdmin;
+	    			if (admin.equals("true")) {
+	    				isAdmin = true;
+	    			} else {
+	    				isAdmin = false;
 	    			}
-	    			else {
-	    				// name/ email/ password are null
+	    			
+	    			if (name.isEmpty() || email.isEmpty() || pwd.isEmpty()) {
+	    				// name/ email/ password are empty
 	    				status = generateErrorStatus("Name, email, and password required.\nPlease enter a valid name, email, and password and try again.");			
 						System.err.println(status);
 						broadcastMessage(status,getClientNum());
 	    			}
+	    			else {
+	    				encryptedPwd = PKCS5.encrypt(pwd);
+		    			System.out.println("[encryptedPwd]="+encryptedPwd);
+
+		    			// Send to DB
+		    			db.addUserToDB(name, email, encryptedPwd, isAdmin); // send encrypted password
+		    		
+		    			status = generateAlertStatus("Account created!");			
+						System.out.println(status);
+						broadcastMessage(status,getClientNum());	
+	    			}
+	    			
 	    			break; // end case addUser
-	   
+	    		// ********************************************************
+	    		
+	    		case "authenticate":
+	    			// for Log In
+	    			System.out.println("In case authenticate:");
+	    			email = parts[1];
+	    			System.out.println("[email]="+email);
+	    			pwd = parts[2];
+	    			System.out.println("[pwd]="+pwd);
+
+	    			
+	    			if ((email.isEmpty() || pwd.isEmpty())) {
+	    				// email/ password are null
+	    				status = generateErrorStatus("Email and password required.\nPlease enter a valid email and password and try again.");			
+						System.err.println(status);
+						broadcastMessage(status,getClientNum());
+
+    				}
+	    			else {
+	    				encryptedPwd = db.getEncryptedPasswordFromDB(email);
+		    			System.out.println("[encryptedPwd]="+encryptedPwd);
+		
+		    			decryptedPwd = PKCS5.decrypt(encryptedPwd, pwd);
+		    			System.out.println("\t[decryptedPwd]="+decryptedPwd);
+		    			System.out.println("\t[pwd]="+pwd);
+		
+		    			
+						if (decryptedPwd.equals(pwd)) {
+							// Good - Valid credentials
+							status = generateAlertStatus("Login Successful");
+							System.out.println(status);
+							broadcastMessage(status,getClientNum());
+						} else {
+							// Bad - Not valid credentials
+							status = generateErrorStatus("Invalid User Credentials");
+							System.err.println(status);
+							broadcastMessage(status,getClientNum());
+						}
+	    			}	
+    				break; // end case authenticate
+    			// ********************************************************
+	    			
 	    		case "addAvailability":
 	    			System.out.println("In case addAvailability");
 //	    			id = parts[];
@@ -329,29 +383,27 @@ public class RezServer extends JFrame {
 	    			notes = parts[5];
 	    			shortDescription = parts[6];
 	    			
-	    			if (!time.equals("") || !date.equals("") || !appointmentType.equals("") ||
-	    					!who.equals("")) {
-	    				// good
-	    				// required fields are filled out! yay
-		    			db.addAvailabilityToDB(time, date, appointmentType, who, notes, shortDescription); 
-	    				
-		    			System.out.println("\n\n\nHERE\n\n\n");
-		    			
-		    			status = generateAlertStatus("Availability added!");			
-						System.out.println(status);
-		    			System.out.println("\n\n\nHERE STATUS: " + status + "\n\n\n");
-
-						
-						broadcastMessage(status,getClientNum());
-	    			} else {
+	    			
+	    			if (time.isEmpty() || date.isEmpty() || appointmentType.isEmpty() ||
+	    					who.isEmpty()) {
 	    				// one of the required fields is null
 	    				// NOTE: notes & short description fields not required
 	    				status = generateErrorStatus("Time, Date, Appointment Type & who the appointment is with are required.\nPlease enter a valid time, date, appointment type, and name and try again.");			
 						System.err.println(status);
 						broadcastMessage(status,getClientNum());
+	    			} else {
+	    				// good
+	    				// required fields are filled out! yay
+		    			db.addAvailabilityToDB(time, date, appointmentType, who, notes, shortDescription); 
+	    						    			
+		    			status = generateAlertStatus("Availability added!");			
+						System.out.println(status);
+		    			System.out.println("RezServer:[authenticate status]=" + status + "\n\n\n");
+						broadcastMessage(status,getClientNum());
 	    			}
-	    			
+
 	    			break; // end addAvailability
+	    		// ********************************************************
 	    			
 	    			
 	    		case "generateJSON": 
@@ -380,6 +432,7 @@ public class RezServer extends JFrame {
 		    		    broadcastMessage(status, getClientNum());
 	    		    }
 	    			break; // end generateJSON
+	    		// ********************************************************
 	    			
 	    		case "loadDBFromJSON":
 	    		    System.out.println("In case load DB from JSON:");
@@ -387,7 +440,6 @@ public class RezServer extends JFrame {
 	    		    String filePath = parts[1];
 	    		    String filePathStripped = filePath.trim();
 	    		    System.out.println("[filePath]=\'" + filePathStripped + "\'");
-//	    		    availabilityArray = db.getAvailabilityFromDB();
 	    		    
 	    		    try (FileReader fileReader = new FileReader(filePathStripped)) {
 	    		        // Read the JSON file contents into a String
@@ -442,45 +494,8 @@ public class RezServer extends JFrame {
 	    		    }
 
 	    		    break; // end loadDBFromJSON
-	    			
-	    		case "authenticate":
-	    			// for Log In
-	    			System.out.println("In case authenticate:");
-	    			email = parts[1];
-	    			System.out.println("[email]="+email);
-	    			pwd = parts[2];
-	    			System.out.println("[pwd]="+pwd);
+	    		// ********************************************************		
 
-	    			
-	    			if ((!email.equals("") || !pwd.equals(""))) {
-		    			encryptedPwd = db.getEncryptedPasswordFromDB(email);
-		    			System.out.println("[encryptedPwd]="+encryptedPwd);
-		
-		    			decryptedPwd = PKCS5.decrypt(encryptedPwd, pwd);
-		    			System.out.println("\t[decryptedPwd]="+decryptedPwd);
-		    			System.out.println("\t[pwd]="+pwd);
-		
-		    			
-						if (decryptedPwd.equals(pwd)) {
-							// Good - Valid credentials
-							status = generateAlertStatus("Login Successful");
-							System.out.println(status);
-							broadcastMessage(status,getClientNum());
-						} else {
-							// Bad - Not valid credentials
-							status = generateErrorStatus("Invalid User Credentials");
-							System.err.println(status);
-							broadcastMessage(status,getClientNum());
-						}
-    				}
-	    			else {
-	    				// email/ password are null
-	    				status = generateErrorStatus("Email and password required.\nPlease enter a valid email and password and try again.");			
-						System.err.println(status);
-						broadcastMessage(status,getClientNum());
-
-	    			}	
-    				break; // end case authenticate
     				
 	    		case "":
 	    			status = generateErrorStatus("RezServer:[processMessageFromCommunicator]: case Null");
@@ -488,13 +503,8 @@ public class RezServer extends JFrame {
 					
 					broadcastMessage(status,getClientNum());
 	    			break; // end case ""
-	    		
-	    			
+	    		// ********************************************************
 
-	    			
-	    		// case "scheduleAppointment"
-	    		
-    				
 	    		default:
 					status = generateIgnoreStatus("Unrecognized command \'" + cmd + "\'");
 					System.err.println(status);

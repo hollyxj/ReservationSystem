@@ -13,7 +13,7 @@ public class ReservationDB {
 		System.out.println("In rez db constructor");
 
 		// Create users table in Database
-		String sqlUsers = "CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, email TEXT, password TEXT)";
+		String sqlUsers = "CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, email TEXT, password TEXT, is_admin BOOLEAN)";
 		createDBTable("users", sqlUsers);
 		
 		// Create users table in Database
@@ -21,11 +21,12 @@ public class ReservationDB {
 		createDBTable("availability", sqlAvail);
 	}
 	
-	public void addUserToDB(String username, String email, String password) throws SQLException {
-	    PreparedStatement pstmt = connection.prepareStatement("insert into users (username, email, password) values (?, ?, ?)");
+	public void addUserToDB(String username, String email, String password, Boolean isAdmin) throws SQLException {
+	    PreparedStatement pstmt = connection.prepareStatement("insert into users (username, email, password, is_admin) values (?, ?, ?, ?)");
 	    pstmt.setString(1, username);
 	    pstmt.setString(2, email);
 	    pstmt.setString(3, password);
+	    pstmt.setBoolean(4, isAdmin);
 	    
 	    pstmt.executeUpdate();
 	}

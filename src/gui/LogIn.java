@@ -17,6 +17,7 @@ public class LogIn extends JPanel {
 	
     Font h1 = new Font("Arial", Font.BOLD, 24); 
     Font h2 = new Font("Arial", Font.BOLD, 18);
+    Font h3 = new Font("Arial", Font.BOLD, 16);
     Font h4 = new Font("Arial", Font.ITALIC, 16);
     Font field = new Font("Arial", Font.PLAIN, 16);
 
@@ -57,7 +58,7 @@ public class LogIn extends JPanel {
         flow.add(emailField);
         // Panel configurations
         JPanel gridPanel = new JPanel();
-        gridPanel.setLayout(new GridLayout(4, 1));
+        gridPanel.setLayout(new GridLayout(5, 1));
 
         gridPanel.add(title); // 1
         gridPanel.add(subtitle); // 2
@@ -88,7 +89,9 @@ public class LogIn extends JPanel {
         passwordPanel.setLayout(new FlowLayout());
         passwordPanel.add(passwordLabel);
         passwordPanel.add(this.passwordField);
-        passwordPanel.add(new JLabel("Show:")); // Eyeball here
+        JLabel showLabel = new JLabel("Show:");
+        showLabel.setFont(h4);
+        passwordPanel.add(showLabel); // Eyeball here
         passwordPanel.add(this.showPasswordCheckbox);
         gridPanel.add(passwordPanel); // 4
 
@@ -96,14 +99,15 @@ public class LogIn extends JPanel {
         showPassword();
 
         JButton submitButton = new JButton("Sign In");
-
+        submitButton.setFont(h3);
         submitButton.addActionListener(e -> {
         	 handleSubmitButton();
         });
 
-        JPanel southPanel = new JPanel();
-        southPanel.setLayout(new FlowLayout());
-        southPanel.add(submitButton);
+        JPanel buttonFlow = new JPanel();
+        buttonFlow.setLayout(new FlowLayout());
+        buttonFlow.add(submitButton);
+        gridPanel.add(buttonFlow); // 5
 
         JPanel megaPanel = new JPanel();
         megaPanel.setLayout(new FlowLayout());
@@ -111,7 +115,6 @@ public class LogIn extends JPanel {
 
         setLayout(new BorderLayout());
         add(megaPanel, BorderLayout.CENTER);
-        add(southPanel, BorderLayout.SOUTH);
 
         setSavedState(this);
         return this;

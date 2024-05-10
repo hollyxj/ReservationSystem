@@ -26,10 +26,13 @@ public class SignUp extends JPanel {
 	private JTextField emailField = new JTextField(25);
 	private JPasswordField passwordField = new JPasswordField(15);
 	private JCheckBox showPasswordCheckbox = new JCheckBox();
+	private JCheckBox isAdminCheckbox = new JCheckBox();
+
 	private JPanel savedState;
 	
     Font h1 = new Font("Arial", Font.BOLD, 24); 
     Font h2 = new Font("Arial", Font.BOLD, 18);
+    Font h3 = new Font("Arial", Font.BOLD, 16);
     Font h4 = new Font("Arial", Font.ITALIC, 16);
     Font field = new Font("Arial", Font.PLAIN, 16);
 
@@ -51,6 +54,7 @@ public class SignUp extends JPanel {
         JLabel nameLabel = new JLabel("Name:");
         JLabel emailLabel = new JLabel("Email:");
         JLabel passwordLabel = new JLabel("Password:");
+        JLabel isAdminLabel = new JLabel("Admin?");
 
         this.nameField.setEditable(true);
         this.nameField.setPreferredSize(new Dimension(200,25));
@@ -70,7 +74,7 @@ public class SignUp extends JPanel {
 
         // Panel configurations
         JPanel gridPanel = new JPanel();
-        gridPanel.setLayout(new GridLayout(5, 1));
+        gridPanel.setLayout(new GridLayout(7, 1));
         
         JPanel nameFlow = new JPanel();
         nameFlow.setLayout(new FlowLayout());
@@ -124,7 +128,20 @@ public class SignUp extends JPanel {
         // Show/hide password checkbox functionality
         showPassword();
 
+        
+        // Admin flow
+        isAdminLabel.setFont(h3);
+        this.isAdminCheckbox = new JCheckBox();
+
+        JPanel adminFlow = new JPanel();
+        adminFlow.setLayout(new FlowLayout());
+        adminFlow.add(isAdminLabel);
+        adminFlow.add(isAdminCheckbox);
+        gridPanel.add(adminFlow); // 6
+        
+        
         JButton submitButton = new JButton("Sign Up");
+        submitButton.setFont(h3);
 
         submitButton.addActionListener(e -> {
         	 try {
@@ -135,17 +152,17 @@ public class SignUp extends JPanel {
 			}
         });
 
-        JPanel southPanel = new JPanel();
-        southPanel.setLayout(new FlowLayout());
-        southPanel.add(submitButton);
-
+        JPanel buttonFlow = new JPanel();
+        buttonFlow.setLayout(new FlowLayout());
+        buttonFlow.add(submitButton);
+        gridPanel.add(buttonFlow); // 7
+        
         JPanel megaPanel = new JPanel();
         megaPanel.setLayout(new FlowLayout());
         megaPanel.add(gridPanel);
 
         setLayout(new BorderLayout());
         add(megaPanel, BorderLayout.CENTER);
-        add(southPanel, BorderLayout.SOUTH);
 
         setSavedState(this);
         return this;
@@ -156,13 +173,23 @@ public class SignUp extends JPanel {
     	String email = this.emailField.getText();
     	char[] passwordChars = this.passwordField.getPassword();
         String pwd = new String(passwordChars);
+        Boolean isSelected = this.isAdminCheckbox.isSelected();
         
         System.out.println("Submit button pressed.\n");
         // Send info the server
-
-        Communicator c = Communicator.getCommunicator();
-        c.addUser(name,email,pwd);
-        clearFields();
+        try {
+        	Communicator c = Communicator.getCommunicator();
+            c.addUser(name,email,pwd,isSelected);
+            clearFields();
+        } catch (Exception e) {
+        	e.printStackTrace();
+//        	SwingUtilities.invokeLater(() -> {
+//    			JOptionPane.showMessageDialog(null, "Error: Issue creating account. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
+//    		});
+        }
+        
+        
+        
     }
     
     

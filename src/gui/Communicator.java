@@ -55,12 +55,13 @@ public class Communicator {
     	return mycommunicator;
     }
     
-	public void addUser(String name, String email, String pwd) {
+	public void addUser(String name, String email, String pwd, Boolean isSelected) {
 		System.out.println("Formatting string.\n");
         String submittedStr = "addUser," // action called by Server
         					  +  name + ","
         					  +  email + ","
-        					  +  pwd + "\n";
+        					  +  pwd + ","
+        					  +  isSelected + "\n";
         System.out.println("Communicator:[addUser]="+submittedStr);
         
         sendMessageToServer(submittedStr);
