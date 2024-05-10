@@ -100,8 +100,8 @@ public class ScheduleAppointment extends JPanel implements TableFormat<Appointme
 		panel.add(issuesTableScrollPane,       new GridBagConstraints(1, 0, 1, 4, 0.85, 1.0,
 		      GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
 	
-		JButton loadButton = new JButton("Load JSON File");
-        loadButton.addActionListener(new ActionListener() {
+		JButton refreshButton = new JButton("Refresh");
+        refreshButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
             	handleLoadButton();
@@ -110,7 +110,7 @@ public class ScheduleAppointment extends JPanel implements TableFormat<Appointme
         });
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        buttonPanel.add(loadButton);
+        buttonPanel.add(refreshButton);
 
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.add(panel, BorderLayout.CENTER);
