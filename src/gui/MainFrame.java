@@ -133,7 +133,7 @@ public class MainFrame extends JFrame {
         // Set frame properties
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         pack();
-        setSize(750, 550);
+        setSize(800, 600);
         setLocationRelativeTo(null);
         setVisible(true);
    

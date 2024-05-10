@@ -13,7 +13,7 @@ public class AppointmentTableFormat implements TableFormat<Appointment> {
 
   @Override
   public int getColumnCount() {
-    return 6;
+    return 7;
   }
 
   @Override

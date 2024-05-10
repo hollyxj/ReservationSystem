@@ -1,7 +1,10 @@
 package database;
+import java.io.IOException;
 import java.sql.*;
 import com.google.gson.*;
 import encryption.*;
+import java.io.FileReader;
+
 
 public class ReservationDB {
 	private Connection connection = null;
@@ -131,6 +134,35 @@ public class ReservationDB {
 	        return jsonArray;
 	    }
 	
+	    
+//	    public void addAvailabilityFromJsonFile(String filePath) throws SQLException, IOException {
+//	        // Read JSON file
+//	        JsonArray jsonArray = readJsonFile(filePath);
+//
+//	        // Insert each appointment from JSON into the database
+//	        for (JsonElement jsonElement : jsonArray) {
+//	            JsonObject jsonObject = jsonElement.getAsJsonObject();
+//	            String time = jsonObject.get("time").getAsString();
+//	            String date = jsonObject.get("date").getAsString();
+//	            String appointmentType = jsonObject.get("appointmentType").getAsString();
+//	            String who = jsonObject.get("who").getAsString();
+//	            String notes = jsonObject.get("notes").getAsString();
+//	            String shortDescription = jsonObject.get("shortDescription").getAsString();
+//
+//	            // Add appointment to database
+//	            addAvailabilityToDB(time, date, appointmentType, who, notes, shortDescription);
+//	        }
+//	    }
+
+//	    private JsonArray readJsonFile(String filePath) throws IOException {
+//	        JsonParser parser = new JsonParser();
+//	        JsonElement jsonElement = parser.parse(new FileReader(filePath));
+//	        if (jsonElement.isJsonArray()) {
+//	            return jsonElement.getAsJsonArray();
+//	        }
+//	        throw new IllegalArgumentException("JSON file does not contain an array.");
+//	    }
+//	    
 	public static void main(String[] args) {
 		
 	}

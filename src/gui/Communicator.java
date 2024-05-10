@@ -83,7 +83,6 @@ public class Communicator {
 	}
 	
 	public void authenticate(String email, String pwd) {
-		System.out.println("Formatting string.\n");
         String submittedStr = "authenticate," // action called by Server
         					  +  email + ","
         					  +  pwd + "\n";
@@ -93,8 +92,15 @@ public class Communicator {
 	
 	public void generateJSON() {
 		String submittedStr = "generateJSON," + "\n";
-        System.out.println("[generateJSON]="+submittedStr);
+        System.out.println("Communicator:[generateJSON]="+submittedStr);
         sendMessageToServer(submittedStr);
+	}
+	
+	public void loadDBFromJSON(String filePath) {
+	    System.out.println("Formatting string.\n");
+	    String submittedStr = "loadDBFromJSON," + filePath + "\n";
+	    System.out.println("Communicator:[loadDBFromJSON]=" + submittedStr);
+	    sendMessageToServer(submittedStr);
 	}
 
     public void sendMessageToServer(String msg) {

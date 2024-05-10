@@ -15,7 +15,6 @@ public class run {
 			// Initialize the user GUI
         	MainFrame mf = new MainFrame();
     	});
-
     	
     }
 }

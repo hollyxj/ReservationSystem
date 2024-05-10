@@ -9,6 +9,8 @@ import java.awt.BorderLayout;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.EOFException;
+import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -33,6 +35,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import com.google.gson.*;
+import java.io.File;
 
 
 public class RezServer extends JFrame {
@@ -282,6 +285,14 @@ public class RezServer extends JFrame {
     	String encryptedPwd = null;
     	String decryptedPwd = null;
     	String msg = null;
+    	JsonArray availabilityArray = null;
+    	String time = null;
+		String date = null;
+		String appointmentType = null;
+		String who = null;
+		String notes = null;
+		String shortDescription = null;
+    	
     	
     	try { 
     		switch (function) {
@@ -311,12 +322,12 @@ public class RezServer extends JFrame {
 	    		case "addAvailability":
 	    			System.out.println("In case addAvailability");
 //	    			id = parts[];
-	    			String time = parts[1];
-	    			String date = parts[2];
-	    			String appointmentType = parts[3];
-	    			String who = parts[4];
-	    			String notes = parts[5];
-	    			String shortDescription = parts[6];
+	    			time = parts[1];
+	    			date = parts[2];
+	    			appointmentType = parts[3];
+	    			who = parts[4];
+	    			notes = parts[5];
+	    			shortDescription = parts[6];
 	    			
 	    			if (!time.equals("") || !date.equals("") || !appointmentType.equals("") ||
 	    					!who.equals("")) {
@@ -347,7 +358,7 @@ public class RezServer extends JFrame {
 	    			System.out.println("In case generate JSON:");
 
 	    			// Call your Database method to get availability data as a JSON array
-	    		    JsonArray availabilityArray = db.getAvailabilityFromDB();
+	    		    availabilityArray = db.getAvailabilityFromDB();
 
 	    		    // Convert the JSON array to a JSON string using Gson
 	    		    String jsonString = new Gson().toJson(availabilityArray);
@@ -356,16 +367,81 @@ public class RezServer extends JFrame {
 	    		    try (FileWriter fileWriter = new FileWriter("availability.json")) {
 	    		        fileWriter.write(jsonString);
 	    		        System.out.println("JSON file updated successfully.");
+		    		    status = generateAlertStatus("Load Successful");
+
 	    		    } catch (IOException e) {
 	    		        e.printStackTrace();
 	    		        System.err.println("Error writing JSON file: " + e.getMessage());
+		    		    status = generateErrorStatus("Error generating JSON file from Database");
+
+	    		    } finally {
+		    		    // Broadcast or use the status message as needed
+		    		    status = generateAlertStatus("Load Successful");
+		    		    broadcastMessage(status, getClientNum());
+	    		    }
+	    			break; // end generateJSON
+	    			
+	    		case "loadDBFromJSON":
+	    		    System.out.println("In case load DB from JSON:");
+
+	    		    String filePath = parts[1];
+	    		    String filePathStripped = filePath.trim();
+	    		    System.out.println("[filePath]=\'" + filePathStripped + "\'");
+//	    		    availabilityArray = db.getAvailabilityFromDB();
+	    		    
+	    		    try (FileReader fileReader = new FileReader(filePathStripped)) {
+	    		        // Read the JSON file contents into a String
+	    		        StringBuilder jsonStringBuilder = new StringBuilder();
+	    		        int character;
+	    		        while ((character = fileReader.read()) != -1) {
+	    		            jsonStringBuilder.append((char) character);
+	    		        }
+	    		        jsonString = jsonStringBuilder.toString();
+
+	    		        // Parse the JSON string using JsonParser
+	    		        availabilityArray = new JsonParser().parse(jsonString).getAsJsonArray();
+	    		        int count=0;
+	    		        
+	    		        System.out.println("RezServer:[case loadDBFromJSON]:");
+	    		        // Insert each appointment from JSON into the database
+	    		        try {
+	    		            for (JsonElement jsonElement : availabilityArray) {
+	    		            	count++;
+	    		                JsonObject jsonObject = jsonElement.getAsJsonObject();
+	    		                time = jsonObject.get("time").getAsString();
+	    		                date = jsonObject.get("date").getAsString();
+	    		                appointmentType = jsonObject.get("appointmentType").getAsString();
+	    		                who = jsonObject.get("who").getAsString();
+	    		                notes = jsonObject.get("notes").getAsString();
+	    		                shortDescription = jsonObject.get("shortDescription").getAsString();
+
+	    		                String stringyy = "time=" // action called by Server
+	    	        					  +  time + ", date="
+	    	        					  +  date + ", appointmentType="
+	    	        					  +  appointmentType + ", who="
+	    	        					  +  who + ", notes="
+	    	        					  +  notes + ", shortDescription="
+	    	        					  +  shortDescription + "[done]";
+	    		                System.out.println("Appointment (" + count + "/59) =["+stringyy+"]");
+	    		                // Add appointment to database
+	    		                db.addAvailabilityToDB(time, date, appointmentType, who, notes, shortDescription);
+	    		            }
+	    		            System.out.println("Appointments loaded from JSON to database successfully.");
+	    		            status = generateAlertStatus("Load Successful");
+	    		        } catch (SQLException e) {
+	    		            e.printStackTrace();
+	    		            System.err.println("Error adding appointments to database: " + e.getMessage());
+	    		            status = generateAlertStatus("Error loading appointments from JSON to database");
+	    		        }
+	    		    } catch (IOException e) {
+	    		        e.printStackTrace();
+	    		        System.err.println("Error reading JSON file: " + e.getMessage());
+	    		        status = generateErrorStatus("Error reading JSON file");
+	    		    } finally {
+	    		        broadcastMessage(status, getClientNum());
 	    		    }
 
-	    		    // Broadcast or use the status message as needed
-	    		    status = generateAlertStatus("Load Successful");
-	    		    broadcastMessage(status, getClientNum());
-//	    			
-	    			break; // end loadJSON
+	    		    break; // end loadDBFromJSON
 	    			
 	    		case "authenticate":
 	    			// for Log In
@@ -413,8 +489,11 @@ public class RezServer extends JFrame {
 					broadcastMessage(status,getClientNum());
 	    			break; // end case ""
 	    		
+	    			
+
+	    			
 	    		// case "scheduleAppointment"
-    		
+	    		
     				
 	    		default:
 					status = generateIgnoreStatus("Unrecognized command \'" + cmd + "\'");

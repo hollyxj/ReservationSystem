@@ -15,6 +15,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -120,15 +121,6 @@ public class ScheduleAppointment extends JPanel implements TableFormat<Appointme
         return this;
 	}
 	
-//	private void handleLoadButton() {
-//        System.out.println("ScheduleAppointment: Load button pressed.");
-//        
-//        System.out.println();
-//
-//        Communicator c = Communicator.getCommunicator();
-//        c.loadJSON();
-//	}
-	
 	public void handleLoadButton() {
 	    System.out.println("ScheduleAppointment: Load button pressed.");
 
@@ -137,9 +129,17 @@ public class ScheduleAppointment extends JPanel implements TableFormat<Appointme
 	    
 	    // Read JSON file and populate appointments
 	    Gson gson = new Gson();
+	    // Get the current working directory
+	    String currentDirectory = System.getProperty("user.dir");
+	    System.out.println("ScheduleAppointment:[userdir]=\'"+currentDirectory+"\'");
+
+	    // Concatenate the file name to the directory path
+	    String filePath = currentDirectory + File.separator + "availability.json";
+
+	    System.out.println("File Path: " + filePath);
 	    
 	    
-	    try (FileReader reader = new FileReader("availability.JSON")) {
+	    try (FileReader reader = new FileReader(filePath)) {
 	        // Define the type of the appointment list using TypeToken
 	        Type appointmentListType = new TypeToken<List<Appointment>>(){}.getType();
 

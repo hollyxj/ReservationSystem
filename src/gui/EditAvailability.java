@@ -7,17 +7,25 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.FileReader;
+import java.io.IOException;
+import java.sql.SQLException;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonParser;
 
 
 public class EditAvailability extends JPanel {
@@ -165,12 +173,27 @@ public class EditAvailability extends JPanel {
 			}
         });
         
+        JButton loadFromJSONButton = new JButton("Load from JSON");
+        loadFromJSONButton.setFont(h3);
+        loadFromJSONButton.addActionListener(e -> {
+            try {
+                String filePath = createFileChooser();
+                System.out.println("EditAvailability:[filePath]=" + filePath);
+                // Send the file path to the server for loading JSON data
+                Communicator c = Communicator.getCommunicator();
+                c.loadDBFromJSON(filePath); // Pass the file path to the loadDBFromJSON method
+            } catch (Exception e2) {
+                e2.printStackTrace();
+            }
+        });
+     
         
         JPanel buttonFlow = new JPanel();
         buttonFlow.setLayout(new FlowLayout());
         buttonFlow.add(submitButton);
         buttonFlow.add(clearButton);
         buttonFlow.add(loadDefaultsButton);
+        buttonFlow.add(loadFromJSONButton);
 
 
         // END BUTTONS
@@ -210,6 +233,33 @@ public class EditAvailability extends JPanel {
         sep.add(Box.createRigidArea(new Dimension(0, 10))); // Add vertical spacing after the separator
         return sep;
     }
+    
+    private String createFileChooser() {
+    	// Create a file chooser
+        JFileChooser fileChooser = new JFileChooser();
+
+        // Set the file filter (optional)
+//        FileNameExtensionFilter filter = new FileNameExtensionFilter("JSON Files", "json");
+//        fileChooser.setFileFilter(filter);
+
+        // Show the file chooser dialog
+        int result = fileChooser.showOpenDialog(null);
+
+        // Check if the user selected a file
+        if (result == JFileChooser.APPROVE_OPTION) {
+            // Get the selected file
+            java.io.File selectedFile = fileChooser.getSelectedFile();
+
+            // Get the file path
+            String filePath = selectedFile.getAbsolutePath();
+            return filePath;
+  
+        } else {
+            System.out.println("No file selected.");
+            return null;
+        }
+    }
+    
     
     public JTextField getTimeField() {
 		return timeField;
