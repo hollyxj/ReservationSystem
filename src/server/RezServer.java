@@ -405,7 +405,11 @@ public class RezServer extends JFrame {
     				
 	    		case "updateAppointmentsColumn":
 	    			email = parts[1];
-	    			appointmentID = parts[2];
+	    			appointmentID = parts[2]; // String
+	    			
+//	    			int aptId = Integer.parseInt(appointmentID);
+//	    			aptId++;
+//	    			appointmentID = Integer.toString(aptId);
 	    			
 	    			db.updateAppointmentsColumn(email, appointmentID);
 	    			

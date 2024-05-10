@@ -39,29 +39,28 @@ import encryption.Encryption;
 
 public class MainFrame extends JFrame {
     private static final long serialVersionUID = 1L;
+    private static Integer currentAptID;
+
     	
 	private SignUp signUpPage;
 	private LogIn logInPage;
     private Welcome welcomePage;
- 
+    private EditAvailability editAvailPage;
+    private MyAppointments myAppointmentsPage;
+    private  ScheduleAppointment schedulePage;
 
-    private static EditAvailability editAvailPage;
-
-    private static ScheduleAppointment schedulePage;
-    private static MyAppointments myAppointmentsPage;
+    
 	private static String signedInName = null;
 	private static String signedInEmail = null;
     private static Boolean userIsLoggedIn = false;
+    
 
-	private ScheduleAppointment scheduleAppointmentPanel;
-    private static MyAppointments myAppointments;
-    
-    
+    private static JMenuBar menuBar = new JMenuBar();
+    private static JMenu menu = new JMenu("Menu");
+
     private static JMenuItem scheduleItem = new JMenuItem("Schedule Appointment");
     private static JMenuItem myAppointmentsItem = new JMenuItem("My Appointments");
     
-    private static JMenuBar menuBar = new JMenuBar();
-    private static JMenu menu = new JMenu("Menu");
     
     // TM:   ™
     public MainFrame() {
@@ -69,13 +68,12 @@ public class MainFrame extends JFrame {
 		createGUI();
     }
     
-    
     private void createGUI() {
     	this.signUpPage = new SignUp();
         this.logInPage = new LogIn();
         this.welcomePage = new Welcome(); 
         schedulePage = new ScheduleAppointment(signedInEmail);
-        myAppointmentsPage = new MyAppointments();
+        this.myAppointmentsPage = new MyAppointments();
         this.editAvailPage = new EditAvailability();
 
         // Initialize the Sign In page as the initial view
@@ -113,19 +111,19 @@ public class MainFrame extends JFrame {
         editItem.addActionListener(e -> {
         	// Schedule appointment page
         	switchToEditAvailability();
-        	MainFrame.editAvailPage.setSavedState((JPanel) getContentPane());
+        	editAvailPage.setSavedState((JPanel) getContentPane());
 
         });
         scheduleItem.addActionListener(e -> {
         	// Schedule appointment page
         	switchToScheduleAppointment();
-        	MainFrame.schedulePage.setSavedState((JPanel) getContentPane());
+//        	this.schedulePage.setSavedState((JPanel) getContentPane());
 
         });
         myAppointmentsItem.addActionListener(e -> {
         	// Schedule appointment page
         	switchToMyAppointments();
-        	MainFrame.myAppointmentsPage.setSavedState((JPanel) getContentPane());
+        	this.myAppointmentsPage.setSavedState((JPanel) getContentPane());
 
         });
         
@@ -160,10 +158,9 @@ public class MainFrame extends JFrame {
         scheduleMenuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Code to handle scheduling appointments and updating MyAppointments
-                String userEmail = "user@example.com"; // Get the user's email (replace with actual logic)
-                String appointmentID = "123"; // Get the selected appointment ID
-                myAppointments.updateAppointmentsColumn(userEmail, appointmentID);
+            	String aptId = Integer.toString(getCurrentAptID());
+            	Communicator c = Communicator.getCommunicator();
+                c.updateAppointmentsColumn(getSignedInEmail(), aptId, myAppointmentsPage);
             }
         });
         
@@ -182,24 +179,24 @@ public class MainFrame extends JFrame {
     	setSignedInEmail(email);
     	setUserIsLoggedIn(true);
     	
-    	 // Initialize components for a logged-in user
-        schedulePage = new ScheduleAppointment(getSignedInEmail());
-        myAppointmentsPage = new MyAppointments();
+    	
         // Add menu items for the logged-in user
 
         scheduleItem.setVisible(true);
         myAppointmentsItem.setVisible(true);
 
-        try {
-			myAppointments = new MyAppointments();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} // Assuming RezServer has a getInstance method
-
     }
     	
     // -------------------------------
+	
+    public static Integer getCurrentAptID() {
+		return currentAptID;
+	}
+
+
+	public static void setCurrentAptID(Integer currentAptID) {
+		MainFrame.currentAptID = currentAptID;
+	}
 
 	public static void setUserIsLoggedIn(Boolean isLoggedIn) {
     	if (isLoggedIn) {
@@ -209,7 +206,8 @@ public class MainFrame extends JFrame {
     	}
 
     }
-    public static Boolean getUserIsLoggedIn() {
+	
+	public static Boolean getUserIsLoggedIn() {
         return userIsLoggedIn;
     }
     
@@ -265,7 +263,9 @@ public class MainFrame extends JFrame {
     }
 
     private void switchToScheduleAppointment() {
-        setContentPane(this.schedulePage.getSavedState());
+//    	schedulePage = new ScheduleAppointment(signedInEmail);
+    	setContentPane(new ScheduleAppointment(signedInEmail));
+//        setContentPane(this.schedulePage.getSavedState());
         validate();
         repaint();
     }
@@ -305,18 +305,6 @@ public class MainFrame extends JFrame {
             repaint();
         }
     }
-
-    public void switchTo(String page) {
-    	
-    	switch(page) {
-    		case "welcome":
-    			switchToWelcome();
-    			break;
-    			
-    		default:
-    			break;
-    	} // end switch
-     }
     
     public static void main(String[] args) {
         System.out.println(System.getProperties());

@@ -22,7 +22,6 @@ import java.lang.reflect.Type;
 import java.util.List;
 
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -31,7 +30,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
-import javax.swing.WindowConstants;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -42,17 +40,11 @@ import appointment.AppointmentTableFormat;
 import appointment.AppointmentTextFilterator;
 import appointment.AppointmentToUserList;
 import ca.odell.glazedlists.gui.TableFormat;
-import ca.odell.issuezilla.Issue;
 
-
+// Modified by Holly Jordan 2024 from
 // SOURCE: https://glazedlists.github.io/glazedlists-tutorial/#hello-world
 
 public class ScheduleAppointment extends JPanel implements TableFormat<Appointment>  {
-	/**
-	 * Display a frame for browsing appointment availability.
-	 */
-	
-	/** event list that hosts the issues */
 	private static final long serialVersionUID = 1L;
 	private JPanel savedState;
 	private EventList<Appointment> appointmentEventList = new BasicEventList<>(); 
@@ -72,8 +64,6 @@ public class ScheduleAppointment extends JPanel implements TableFormat<Appointme
     }
 	public JPanel initGUI()  {
 		SortedList<Appointment> sortedAppointments = new SortedList<>(appointmentEventList, new AppointmentComparator());
-		
-		
 		
 		JTextField filterEdit = new JTextField(10);
 		AppointmentTextFilterator filterator = new AppointmentTextFilterator();
@@ -125,7 +115,6 @@ public class ScheduleAppointment extends JPanel implements TableFormat<Appointme
             }
         });
         
-
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         buttonPanel.add(refreshButton);
         buttonPanel.add(scheduleButton);
@@ -204,15 +193,6 @@ public class ScheduleAppointment extends JPanel implements TableFormat<Appointme
 	        System.out.println("Who: " + who);
 	        System.out.println("Notes: " + notes);
 	        System.out.println("Short Description: " + shortDescription);
-
-	     // Display a JOptionPane dialog
-//	        String message = "Schedule appointment?\nDetails:\n" +
-//	                "Time: " + time + "\n" +
-//	                "Date: " + date + "\n" +
-//	                "Appointment Type: " + appointmentType + "\n" +
-//	                "Who: " + who + "\n" +
-//	                "Notes: " + notes + "\n" +
-//	                "Short Description: " + shortDescription;
 	        
 	        String message = "Please confirm appointment details: \n" + 
 	        		"You are scheduling a " + appointmentType + " appointment with " + who +
@@ -227,12 +207,11 @@ public class ScheduleAppointment extends JPanel implements TableFormat<Appointme
 
 	        // Check user's choice
 	        if (option == JOptionPane.YES_OPTION) {
-//	            // Add the appointment data to MyAppointments panel
-//	            String[] rowData = {time, date, appointmentType, who, notes, shortDescription};
-//	            ((MainFrame) SwingUtilities.getWindowAncestor(this)).getMyAppointmentsPanel().addAppointment(rowData);
-//	        
 	            // Get the selected appointment ID
-	            Integer idNum = selectedAppointment.getId(); // Assuming there's a method to get the ID
+	            Integer idNum = selectedAppointment.getId();
+	            // Send to Main Frame
+	            MainFrame.setCurrentAptID(idNum);
+
 	            String appointmentID = Integer.toString(idNum);
 	            
 	            // Update the "users" table with the appointment ID
@@ -250,20 +229,11 @@ public class ScheduleAppointment extends JPanel implements TableFormat<Appointme
 	        } else {
 	            System.out.println("User clicked Go Back.");
 	        }
-	        
-	        // Add the appointment data to MyAppointments panel
-//	        String[] rowData = {time, date, appointmentType, who, notes, shortDescription};
-//	        ((MainFrame) SwingUtilities.getWindowAncestor(this)).getMyAppointmentsPanel().addAppointment(rowData);
 	    } else {
 	        System.out.println("No appointment selected.");
 	    }
-	    
-	  
 	}
-
 	
-
-
 	public JTable getAppointmentsJTable() {
 		return appointmentsJTable;
 	}
@@ -294,4 +264,4 @@ public class ScheduleAppointment extends JPanel implements TableFormat<Appointme
     	return this.savedState;
     }
 
-} // end class
+} // end class ScheduleAppointment

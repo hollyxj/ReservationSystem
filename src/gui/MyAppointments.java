@@ -1,7 +1,6 @@
 package gui;
 
 import javax.swing.*;
-import database.*;
 import gui.Communicator.UpdateCallback;
 
 import javax.swing.table.DefaultTableModel;
@@ -11,8 +10,6 @@ import ca.odell.glazedlists.EventList;
 import appointment.*;
 
 import java.awt.*;
-import server.RezServer;
-
 
 public class MyAppointments extends JPanel implements UpdateCallback {
 
@@ -22,7 +19,6 @@ public class MyAppointments extends JPanel implements UpdateCallback {
     private DefaultTableModel tableModel;
     
     private EventList<Appointment> appointmentEventList = new BasicEventList<>();
-
 
     Font h1 = new Font("Arial", Font.BOLD, 24);
     Font h2 = new Font("Arial", Font.BOLD, 18);
@@ -56,30 +52,8 @@ public class MyAppointments extends JPanel implements UpdateCallback {
         setSavedState(this);
         return this;
     }
-    
-    
-        // Retrieve appointments for the current user
-//        String userEmail = getCurrentUserEmail(); // Method to get the current logged-in user's email
-//        DatabaseManager dbManager = new DatabaseManager();
-//        String appointmentIDs = dbManager.getAppointmentsForUser(userEmail);
-//        if (appointmentIDs != null) {
-//            String[] appointmentIDArray = appointmentIDs.split(",");
-//            for (String appointmentID : appointmentIDArray) {
-//                // Query the "appointments" table for each appointment ID and add them to the table
-//                Appointment appointment = dbManager.getAppointmentByID(appointmentID);
-//                if (appointment != null) {
-//                    String[] rowData = {appointment.getTime(), appointment.getDate(), appointment.getAppointmentType(),
-//                            appointment.getWho(), appointment.getNotes(), appointment.getShortDescription()};
-//                    addAppointment(rowData);
-//                }
-//            }
-//        }
-//
-//        dbManager.closeConnection();
-//        return this; // Return the panel
-    
-        
-        @Override
+
+    @Override
     public void onUpdateSuccess() {
         // Update UI after successful database update
         initGUI();
@@ -107,8 +81,9 @@ public class MyAppointments extends JPanel implements UpdateCallback {
         tableModel.setRowCount(0);
     }
 
-    public void updateAppointmentsColumn(String userEmail, String appointmentID) {
-    	Communicator c = Communicator.getCommunicator();
-    	c.updateAppointmentsColumn(userEmail, appointmentID);
-    }
+//    public void updateAppointmentsColumn(String userEmail, Integer integer) {
+//    	Communicator c = Communicator.getCommunicator();
+//    	String aptNum = Integer.toString(integer);
+//    	c.updateAppointmentsColumn(userEmail, aptNum, null);
+//    }
 }

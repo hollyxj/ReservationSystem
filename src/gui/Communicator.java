@@ -58,18 +58,6 @@ public class Communicator {
     	return mycommunicator;
     }
     
-    public String getAppointmentsForUser(String userEmail) {
-        // Call the corresponding method in ReservationDB to fetch appointments
-    	RezServer serverInstance = new RezServer();
-    	return serverInstance.getDB().getAppointmentsForUser(userEmail);
-    }
-
-    public void updateAppointmentsColumn(String userEmail, String appointmentID) {
-        // Call the corresponding method in ReservationDB to update appointments
-    	RezServer serverInstance = new RezServer();
-    	serverInstance.getDB().updateAppointmentsColumn(userEmail, appointmentID);
-    }
-    
 	public void addUser(String name, String email, String pwd, Boolean isSelected, String appointments) {
 		System.out.println("Formatting string.\n");
         String submittedStr = "addUser," // action called by Server
@@ -99,14 +87,17 @@ public class Communicator {
         // add the availability to the Database
 	}
 	
-	public void updateAppointmentsColumn(String userEmail, Integer appointmentID) {
-		System.out.println("Formatting string.\n");
-        String submittedStr = "updateAppointmentsColumn," // action called by Server
-        					  +  userEmail + ","
-        					  +  appointmentID;
-        System.out.println("Communicator:[updateAppointmentsColumn]="+submittedStr);
- 
-        sendMessageToServer(submittedStr);
+	public interface UpdateCallback {
+	    void onUpdateSuccess();
+	}
+
+	public void updateAppointmentsColumn(String userEmail, String appointmentID, UpdateCallback callback) {
+	    String submittedStr = "updateAppointmentsColumn," 
+			    			+ userEmail + "," 
+			    			+ appointmentID + "\n";
+	    System.out.println("Communicator:[updateAppointmentsColumn]=" + submittedStr);
+	    sendMessageToServer(submittedStr);
+	    callback.onUpdateSuccess(); // Notify UI about the update
 	}
 	
 	public void authenticate(String email, String pwd) {
@@ -129,18 +120,6 @@ public class Communicator {
 	    sendMessageToServer(submittedStr);
 	}
 	
-	public interface UpdateCallback {
-	    void onUpdateSuccess();
-	}
-
-	public void updateAppointmentsColumn(String userEmail, String appointmentID, UpdateCallback callback) {
-	    String submittedStr = "updateAppointmentsColumn," 
-			    			+ userEmail + "," 
-			    			+ appointmentID + "\n";
-	    System.out.println("Communicator:[updateAppointmentsColumn]=" + submittedStr);
-	    sendMessageToServer(submittedStr);
-	    callback.onUpdateSuccess(); // Notify UI about the update
-	}
     public void sendMessageToServer(String msg) {
     	// Send the message to the server
     	DataOutputStream outStream = getHandshakeOutputStream();
