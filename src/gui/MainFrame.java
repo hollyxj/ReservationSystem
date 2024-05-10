@@ -43,17 +43,22 @@ public class MainFrame extends JFrame {
 	private SignUp signUpPage;
 	private LogIn logInPage;
     private Welcome welcomePage;
-    private ScheduleAppointment schedulePage;
-    private EditAvailability editAvailPage;
-    private MyAppointments myAppointmentsPage;
+ 
 
-    
-	private static String signedInName;
-	private static String signedInEmail;
+    private static EditAvailability editAvailPage;
+
+    private static ScheduleAppointment schedulePage;
+    private static MyAppointments myAppointmentsPage;
+	private static String signedInName = null;
+	private static String signedInEmail = null;
     private static Boolean userIsLoggedIn = false;
 
 	private ScheduleAppointment scheduleAppointmentPanel;
-    private MyAppointments myAppointments;
+    private static MyAppointments myAppointments;
+    
+    
+    private static JMenuItem scheduleItem = new JMenuItem("Schedule Appointment");
+    private static JMenuItem myAppointmentsItem = new JMenuItem("My Appointments");
     
     private static JMenuBar menuBar = new JMenuBar();
     private static JMenu menu = new JMenu("Menu");
@@ -62,15 +67,15 @@ public class MainFrame extends JFrame {
     public MainFrame() {
         super("Rezerve™");
 		createGUI();
-		
-
     }
     
     
     private void createGUI() {
     	this.signUpPage = new SignUp();
         this.logInPage = new LogIn();
-        this.welcomePage = new Welcome();
+        this.welcomePage = new Welcome(); 
+        schedulePage = new ScheduleAppointment(signedInEmail);
+        myAppointmentsPage = new MyAppointments();
         this.editAvailPage = new EditAvailability();
 
         // Initialize the Sign In page as the initial view
@@ -80,8 +85,7 @@ public class MainFrame extends JFrame {
         JMenuItem welcomeItem = new JMenuItem("Welcome");
         JMenuItem signUpItem = new JMenuItem("Sign Up");
         JMenuItem signInItem = new JMenuItem("Log In");
-        JMenuItem scheduleItem = new JMenuItem("Schedule Appointment");
-        JMenuItem myAppointmentsItem = new JMenuItem("My Appointments");
+
         JMenuItem editItem = new JMenuItem("Edit Availability");
         JMenuItem exitItem = new JMenuItem("Exit");
         
@@ -105,49 +109,42 @@ public class MainFrame extends JFrame {
         	switchToWelcome();
         	this.welcomePage.setSavedState((JPanel) getContentPane());
         });
-        scheduleItem.addActionListener(e -> {
-        	// Schedule appointment page
-        	switchToScheduleAppointment();
-        	this.schedulePage.setSavedState((JPanel) getContentPane());
 
-        });
         editItem.addActionListener(e -> {
         	// Schedule appointment page
         	switchToEditAvailability();
-        	this.editAvailPage.setSavedState((JPanel) getContentPane());
+        	MainFrame.editAvailPage.setSavedState((JPanel) getContentPane());
+
+        });
+        scheduleItem.addActionListener(e -> {
+        	// Schedule appointment page
+        	switchToScheduleAppointment();
+        	MainFrame.schedulePage.setSavedState((JPanel) getContentPane());
 
         });
         myAppointmentsItem.addActionListener(e -> {
         	// Schedule appointment page
         	switchToMyAppointments();
-        	this.myAppointmentsPage.setSavedState((JPanel) getContentPane());
+        	MainFrame.myAppointmentsPage.setSavedState((JPanel) getContentPane());
 
         });
+        
         exitItem.addActionListener(e -> System.exit(0)); // Exit the application
         
         
-
-        // Check if the user is logged in to decide whether to add My Appointments to the menu
-        if (userIsLoggedIn) {
-            // get email of 
-            String signedInEmail = getSignedInEmail();
-            this.schedulePage = new ScheduleAppointment(signedInEmail);
-            this.myAppointmentsPage = new MyAppointments();
-            menu.add(scheduleItem);
-            menu.add(myAppointmentsItem);
-            myAppointments = new MyAppointments(RezServer.getInstance()); // Assuming RezServer has a getInstance method
-
-        }
-        
-        // if user is admin
-        menu.add(editItem);
-        
-        
-
+       
         menu.add(welcomeItem);
         menu.add(signUpItem);
         menu.add(signInItem);
-//        menu.add(myAppointmentsItem);
+        // if user is logged in
+        menu.add(scheduleItem);
+        scheduleItem.setVisible(false);
+        menu.add(myAppointmentsItem);
+        myAppointmentsItem.setVisible(false);
+
+        // if user is admin
+        menu.add(editItem);
+        
         menu.addSeparator();
         menu.add(exitItem);
         menuBar.add(menu);
@@ -178,14 +175,31 @@ public class MainFrame extends JFrame {
         setVisible(true);
        }
     
-//    public void setLoggedInUser(String email) {
-//    	setUserIsLoggedIn(true);
-//    	System.out.println("MainFrame:[userIsLoggedIn]="+getUserIsLoggedIn());
-//    	
-//    	System.out.println("MainFrame:[]="+getUserIsLoggedIn());
-//    	setSignedInEmail(email);
-//    	
-//    }
+    public static void initializeLoggedInComponents(String name, String email) {
+    	System.out.println("MainFrame:[initializeLoggedInComponents]");
+
+    	setSignedInEmail(name);
+    	setSignedInEmail(email);
+    	setUserIsLoggedIn(true);
+    	
+    	 // Initialize components for a logged-in user
+        schedulePage = new ScheduleAppointment(getSignedInEmail());
+        myAppointmentsPage = new MyAppointments();
+        // Add menu items for the logged-in user
+
+        scheduleItem.setVisible(true);
+        myAppointmentsItem.setVisible(true);
+
+        try {
+			myAppointments = new MyAppointments();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} // Assuming RezServer has a getInstance method
+
+    }
+    	
+    // -------------------------------
 
 	public static void setUserIsLoggedIn(Boolean isLoggedIn) {
     	if (isLoggedIn) {
@@ -195,7 +209,7 @@ public class MainFrame extends JFrame {
     	}
 
     }
-    public Boolean getUserIsLoggedIn() {
+    public static Boolean getUserIsLoggedIn() {
         return userIsLoggedIn;
     }
     
@@ -210,7 +224,7 @@ public class MainFrame extends JFrame {
 	}
 
 
-	public String getSignedInEmail() {
+	public static String getSignedInEmail() {
 		return signedInEmail;
 	}
 

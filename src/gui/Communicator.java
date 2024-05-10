@@ -96,7 +96,17 @@ public class Communicator {
         System.out.println("Communicator:[addAvailability]="+submittedStr);
  
         sendMessageToServer(submittedStr);
-        // add the user to the Database
+        // add the availability to the Database
+	}
+	
+	public void updateAppointmentsColumn(String userEmail, Integer appointmentID) {
+		System.out.println("Formatting string.\n");
+        String submittedStr = "updateAppointmentsColumn," // action called by Server
+        					  +  userEmail + ","
+        					  +  appointmentID;
+        System.out.println("Communicator:[updateAppointmentsColumn]="+submittedStr);
+ 
+        sendMessageToServer(submittedStr);
 	}
 	
 	public void authenticate(String email, String pwd) {
@@ -287,34 +297,15 @@ public class Communicator {
     	String status = msg.replace(toReplace, "");
     	status = status.trim();
     	try { 
-    		switch (function) {
-//	    		case "ignore": 
-//	    			// do nothing
-//	    			System.out.println("Communicator:[parseStatus]:[ignore]:"+status);
-//	    			break;
-	    		
+    		switch (function) {	    		
     			case "getLoggedInUserInfo":
 	    			System.out.println("Communicator:[loggedInEmail]:[alert]:"+status);
 					// MainFrame.sendAlert(status);
 	    			String name = parts[1];
 	    			String email = parts[2];
-	    			String loggedIn = parts[3];
-	    			Boolean userIsLoggedIn;
-	    			if (loggedIn.equals("true")) {
-	    		        userIsLoggedIn = true;
-	    			} else {
-	    				 userIsLoggedIn = false;
-	    			}
-	    			
-	    			// Name
-	    			MainFrame.setSignedInName(name);
-	    			// Email
-	    			MainFrame.setSignedInEmail(email);
-	    			// User is logged in
-	    			MainFrame.setUserIsLoggedIn(userIsLoggedIn);
-	    		
 
-//					MainFrame.setLoggedInUser(status);
+	    			MainFrame.initializeLoggedInComponents(name,email) ;
+	    			break;
 					
     		
 	    		case "alert":

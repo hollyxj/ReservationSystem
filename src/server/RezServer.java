@@ -385,6 +385,7 @@ public class RezServer extends JFrame {
 								status = generateAlertStatus("Login Successful!");
 								System.out.println(status);
 								broadcastMessage(status,getClientNum());
+								sendLoggedInUserInfo();
 							} else {
 								// Bad - Not valid credentials
 								status = generateErrorStatus("Invalid User Credentials. Please try again.");
@@ -442,7 +443,7 @@ public class RezServer extends JFrame {
 
 	    			break; // end addAvailability
 	    		// ********************************************************
-	    			
+	    			    			
 	    			
 	    		case "generateJSON": 
 	    			System.out.println("In case generate JSON:");
@@ -564,8 +565,7 @@ public class RezServer extends JFrame {
     public void sendLoggedInUserInfo() {
     	String status = "getLoggedInUserInfo," +
 						getSignedInName() + "," +
-    					getSignedInEmail() + "," +
-    					getUserIsLoggedIn();
+    					getSignedInEmail();
 
     	broadcastMessage(status, getClientNum());
     }

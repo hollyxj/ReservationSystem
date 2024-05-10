@@ -189,11 +189,7 @@ public class SignUp extends JPanel {
 //    			JOptionPane.showMessageDialog(null, "Error: Issue creating account. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
 //    		});
         }
-        
-        
-        
     }
-    
     
     public void clearFields() {
     	this.nameField.setText("");

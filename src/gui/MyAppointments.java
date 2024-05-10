@@ -22,7 +22,6 @@ public class MyAppointments extends JPanel implements UpdateCallback {
     private DefaultTableModel tableModel;
     
     private EventList<Appointment> appointmentEventList = new BasicEventList<>();
-    private RezServer server;
 
 
     Font h1 = new Font("Arial", Font.BOLD, 24);
@@ -34,10 +33,6 @@ public class MyAppointments extends JPanel implements UpdateCallback {
         // Default constructor
         super(new BorderLayout()); // Set the layout for the panel
         initGUI(); // Initialize the GUI components
-    }
-    
-    public MyAppointments(RezServer server) {
-        this.server = server;
     }
 
     public JPanel initGUI() {
@@ -111,12 +106,9 @@ public class MyAppointments extends JPanel implements UpdateCallback {
     public void clearAppointments() {
         tableModel.setRowCount(0);
     }
-    
-    public String getAppointmentsForUser(String userEmail) {
-        return server.getDB().getAppointmentsForUser(userEmail);
-    }
 
     public void updateAppointmentsColumn(String userEmail, String appointmentID) {
-        server.getDB().updateAppointmentsColumn(userEmail, appointmentID);
+    	Communicator c = Communicator.getCommunicator();
+    	c.updateAppointmentsColumn(userEmail, appointmentID);
     }
 }
