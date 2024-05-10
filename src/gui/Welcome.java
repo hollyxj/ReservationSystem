@@ -24,6 +24,7 @@ public class Welcome extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel savedState;
+	private static JLabel welcomeLabel;
 
 	Font h1 = new Font("Arial", Font.BOLD, 24); 
     Font h2 = new Font("Arial", Font.BOLD, 18);
@@ -35,9 +36,13 @@ public class Welcome extends JPanel {
         super(new BorderLayout()); // Set the layout for the panel
         initGUI(); // Initialize the GUI components
     }
-
+    
+    public static void setWelcomeLabel(String name) {
+    	welcomeLabel.setText("Welcome to Rezerve™, " + name + "!");
+    }
+	
     public JPanel initGUI() {
-        JLabel welcomeLabel = new JLabel("Welcome to Rezerve™!");
+    	welcomeLabel = new JLabel("Welcome to Rezerve™!");
         welcomeLabel.setFont(h1);
         JPanel flowPanel = new JPanel();
     	flowPanel.setLayout(new FlowLayout());

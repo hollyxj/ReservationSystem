@@ -385,6 +385,10 @@ public class RezServer extends JFrame {
 								status = generateAlertStatus("Login Successful!");
 								System.out.println(status);
 								broadcastMessage(status,getClientNum());
+								
+								name = db.getNameFromEmail(email);	
+								setSignedInName(name);
+								setSignedInEmail(email);
 								sendLoggedInUserInfo();
 							} else {
 								// Bad - Not valid credentials

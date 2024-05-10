@@ -282,7 +282,8 @@ public class Communicator {
 					// MainFrame.sendAlert(status);
 	    			String name = parts[1];
 	    			String email = parts[2];
-
+	    			
+	    			Welcome.setWelcomeLabel(name);
 	    			MainFrame.initializeLoggedInComponents(name,email) ;
 	    			break;
 					

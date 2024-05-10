@@ -126,12 +126,12 @@ public class ReservationDB {
 		}
 	}
 	
-	 public JsonArray getAvailabilityFromDB() {
-	        JsonArray jsonArray = new JsonArray();
-	        PreparedStatement pstmt = null;
-	        ResultSet resultSet = null;
+	public JsonArray getAvailabilityFromDB() {
+        JsonArray jsonArray = new JsonArray();
+        PreparedStatement pstmt = null;
+        ResultSet resultSet = null;
 
-	        try {
+        try {
 	            // Establish JDBC connection
 	            connection = DriverManager.getConnection("jdbc:sqlite:reservations.db");
 
@@ -170,36 +170,23 @@ public class ReservationDB {
 	        return jsonArray;
 	    }
 	
-	    
-//	    public void addAvailabilityFromJsonFile(String filePath) throws SQLException, IOException {
-//	        // Read JSON file
-//	        JsonArray jsonArray = readJsonFile(filePath);
-//
-//	        // Insert each appointment from JSON into the database
-//	        for (JsonElement jsonElement : jsonArray) {
-//	            JsonObject jsonObject = jsonElement.getAsJsonObject();
-//	            String time = jsonObject.get("time").getAsString();
-//	            String date = jsonObject.get("date").getAsString();
-//	            String appointmentType = jsonObject.get("appointmentType").getAsString();
-//	            String who = jsonObject.get("who").getAsString();
-//	            String notes = jsonObject.get("notes").getAsString();
-//	            String shortDescription = jsonObject.get("shortDescription").getAsString();
-//
-//	            // Add appointment to database
-//	            addAvailabilityToDB(time, date, appointmentType, who, notes, shortDescription);
-//	        }
-//	    }
-
-//	    private JsonArray readJsonFile(String filePath) throws IOException {
-//	        JsonParser parser = new JsonParser();
-//	        JsonElement jsonElement = parser.parse(new FileReader(filePath));
-//	        if (jsonElement.isJsonArray()) {
-//	            return jsonElement.getAsJsonArray();
-//	        }
-//	        throw new IllegalArgumentException("JSON file does not contain an array.");
-//	    }
-//	    
-	public static void main(String[] args) {
-		
-	}
+	    public String getNameFromEmail(String userEmail) {
+	        try {
+	            // Retrieve username from the "users" table based on email
+	            String selectQuery = "SELECT username FROM users WHERE email = ?";
+	            PreparedStatement statement = connection.prepareStatement(selectQuery);
+	            statement.setString(1, userEmail);
+	            ResultSet resultSet = statement.executeQuery();
+	            if (resultSet.next()) {
+	                return resultSet.getString("username");
+	            }
+	        } catch (SQLException e) {
+	            System.err.println("Error retrieving name for email: " + e.getMessage());
+	        }
+	        return null;
+	    }
+	 
+		public static void main(String[] args) {
+			
+		}
 }

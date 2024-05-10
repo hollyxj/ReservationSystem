@@ -161,6 +161,7 @@ public class MainFrame extends JFrame {
             	String aptId = Integer.toString(getCurrentAptID());
             	Communicator c = Communicator.getCommunicator();
                 c.updateAppointmentsColumn(getSignedInEmail(), aptId, myAppointmentsPage);
+               
             }
         });
         
@@ -174,17 +175,18 @@ public class MainFrame extends JFrame {
     
     public static void initializeLoggedInComponents(String name, String email) {
     	System.out.println("MainFrame:[initializeLoggedInComponents]");
+    	System.out.println("\n\n\n--------------- Name" + name);
+    	System.out.println("\n\n\n--------------- email" + email);
 
-    	setSignedInEmail(name);
+    	setSignedInName(name);
     	setSignedInEmail(email);
     	setUserIsLoggedIn(true);
+
     	
     	
         // Add menu items for the logged-in user
-
         scheduleItem.setVisible(true);
         myAppointmentsItem.setVisible(true);
-
     }
     	
     // -------------------------------
