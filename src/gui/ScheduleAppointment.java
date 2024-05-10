@@ -25,6 +25,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -110,8 +111,8 @@ public class ScheduleAppointment extends JPanel implements TableFormat<Appointme
             }
         });
         
-		JButton selectButton = new JButton("Select");
-		selectButton.addActionListener(new ActionListener() {
+		JButton scheduleButton = new JButton("Schedule Appointment");
+		scheduleButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
             	handleSelectButton();
@@ -121,7 +122,7 @@ public class ScheduleAppointment extends JPanel implements TableFormat<Appointme
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         buttonPanel.add(refreshButton);
-        buttonPanel.add(selectButton);
+        buttonPanel.add(scheduleButton);
 
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.add(panel, BorderLayout.CENTER);
@@ -196,9 +197,38 @@ public class ScheduleAppointment extends JPanel implements TableFormat<Appointme
 	        System.out.println("Notes: " + notes);
 	        System.out.println("Short Description: " + shortDescription);
 
+	     // Display a JOptionPane dialog
+//	        String message = "Schedule appointment?\nDetails:\n" +
+//	                "Time: " + time + "\n" +
+//	                "Date: " + date + "\n" +
+//	                "Appointment Type: " + appointmentType + "\n" +
+//	                "Who: " + who + "\n" +
+//	                "Notes: " + notes + "\n" +
+//	                "Short Description: " + shortDescription;
+	        
+	        String message = "Please confirm appointment details: \n" + 
+	        		"You are scheduling a " + appointmentType + " appointment with " + who +
+	        		" on  " + date + " at " + time + ".\n\n" +
+	        		"Notes: " + notes + "\n" +
+	                "Short Description: " + shortDescription + "\n\n" +
+	        		"Schedule appointment?" +"\n";
+	        
+	        int option = JOptionPane.showOptionDialog(null, message, "Schedule Appointment",
+	                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+	                new String[]{"Schedule", "Go Back"}, "Schedule");
+
+	        // Check user's choice
+	        if (option == JOptionPane.YES_OPTION) {
+	            // Add the appointment data to MyAppointments panel
+	            String[] rowData = {time, date, appointmentType, who, notes, shortDescription};
+	            ((MainFrame) SwingUtilities.getWindowAncestor(this)).getMyAppointmentsPanel().addAppointment(rowData);
+	        } else {
+	            System.out.println("User clicked Go Back.");
+	        }
+	        
 	        // Add the appointment data to MyAppointments panel
-	        String[] rowData = {time, date, appointmentType, who, notes, shortDescription};
-	        ((MainFrame) SwingUtilities.getWindowAncestor(this)).getMyAppointmentsPanel().addAppointment(rowData);
+//	        String[] rowData = {time, date, appointmentType, who, notes, shortDescription};
+//	        ((MainFrame) SwingUtilities.getWindowAncestor(this)).getMyAppointmentsPanel().addAppointment(rowData);
 	    } else {
 	        System.out.println("No appointment selected.");
 	    }
