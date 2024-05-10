@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Objects;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -340,6 +341,7 @@ public class RezServer extends JFrame {
 	    			System.out.println("[email]="+email);
 	    			pwd = parts[2];
 	    			System.out.println("[pwd]="+pwd);
+	    			String password = pwd.trim();
 
 	    			
 	    			if ((email.isEmpty() || pwd.isEmpty())) {
@@ -353,22 +355,38 @@ public class RezServer extends JFrame {
 	    				encryptedPwd = db.getEncryptedPasswordFromDB(email);
 		    			System.out.println("[encryptedPwd]="+encryptedPwd);
 		
-		    			decryptedPwd = PKCS5.decrypt(encryptedPwd, pwd);
-		    			System.out.println("\t[decryptedPwd]="+decryptedPwd);
-		    			System.out.println("\t[pwd]="+pwd);
-		
-		    			
-						if (decryptedPwd.equals(pwd)) {
-							// Good - Valid credentials
-							status = generateAlertStatus("Login Successful");
-							System.out.println(status);
-							broadcastMessage(status,getClientNum());
-						} else {
-							// Bad - Not valid credentials
-							status = generateErrorStatus("Invalid User Credentials");
+		    			if (Objects.isNull(encryptedPwd)) {
+		    				status = generateErrorStatus("User not found.\nNeed to create an account? Go to \"Menu\" > \"Sign Up\".");			
 							System.err.println(status);
 							broadcastMessage(status,getClientNum());
-						}
+							break;
+		    			}
+		    			
+		    			try {
+			    			decryptedPwd = PKCS5.decrypt(encryptedPwd, password);
+			    			System.out.println("\t[decryptedPwd]="+decryptedPwd);
+			    			System.out.println("\t[pwd]="+pwd);
+			    			System.out.println("\tdecryptedPwd.trim().equals(pwd.trim()]="+decryptedPwd.trim().equals(pwd.trim()));
+
+			    			
+			    			
+							if (decryptedPwd.trim().equals(pwd.trim())) {
+								// Good - Valid credentials
+								status = generateAlertStatus("Login Successful!");
+								System.out.println(status);
+								broadcastMessage(status,getClientNum());
+							} else {
+								// Bad - Not valid credentials
+								status = generateErrorStatus("Invalid User Credentials. Please try again.");
+								System.err.println(status);
+								broadcastMessage(status,getClientNum());
+							}
+		    			} catch (Exception e4) {
+		    				e4.printStackTrace();
+		    				status = generateErrorStatus("Invalid User Credentials. Please try again.");
+							System.err.println(status);
+							broadcastMessage(status,getClientNum());
+		    			}
 	    			}	
     				break; // end case authenticate
     			// ********************************************************

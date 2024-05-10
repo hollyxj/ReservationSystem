@@ -90,5 +90,4 @@ public class Welcome extends JPanel {
     	return this.savedState;
     }
 
-    // Additional methods specific to the Welcome panel can be added here
 }

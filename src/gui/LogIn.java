@@ -132,7 +132,7 @@ public class LogIn extends JPanel {
 
         Communicator c = Communicator.getCommunicator();
         c.authenticate(email,pwd);
-        clearFields();
+//        clearFields();
 //        MainFrame.switchTo("welcome");
         
 //        MainFrame.switchToWelcome();

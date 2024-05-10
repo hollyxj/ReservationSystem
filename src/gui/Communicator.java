@@ -258,12 +258,13 @@ public class Communicator {
     	// Remove the 'function' from the message and send the rest of the string in the pop up
     	String toReplace = parts[0]+",";
     	String status = msg.replace(toReplace, "");
+    	status = status.trim();
     	try { 
     		switch (function) {
-	    		case "ignore": 
-	    			// do nothing
-	    			System.out.println("Communicator:[parseStatus]:[ignore]:"+status);
-	    			break;
+//	    		case "ignore": 
+//	    			// do nothing
+//	    			System.out.println("Communicator:[parseStatus]:[ignore]:"+status);
+//	    			break;
 	    		
 	    		case "alert":
 	    			// Show an alert in the mainframe
@@ -278,7 +279,7 @@ public class Communicator {
 	    			break;
 	    			
 	    		default:
-	    			System.out.println("Communicator:[parseStatus]: Unrecognized status \'" + status + "\'");
+	    			System.out.println("Communicator:[parseStatus]:[status]: \'" + status + "\'");
 	    			break;
 	    			
     		} // end switch

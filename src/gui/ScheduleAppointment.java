@@ -29,6 +29,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
 import com.google.gson.Gson;
@@ -56,6 +57,7 @@ public class ScheduleAppointment extends JPanel implements TableFormat<Appointme
 	private static final long serialVersionUID = 1L;
 	private JPanel savedState;
 	private EventList<Appointment> appointmentEventList = new BasicEventList<>(); 
+	private JTable appointmentsJTable;
 
 	public ScheduleAppointment() {
 		initGUI();
@@ -71,16 +73,16 @@ public class ScheduleAppointment extends JPanel implements TableFormat<Appointme
 		MatcherEditor<Appointment> textMatcherEditor = new TextComponentMatcherEditor<>(filterEdit, filterator);
 		FilterList<Appointment> textFilteredIssues = new FilterList<>(sortedAppointments, textMatcherEditor);
 		
-		// derive the users list from the issues list
+		// derive the users list from the appointments list
 		EventList<String> usersNonUnique = new AppointmentToUserList(appointmentEventList);
 		UniqueList<String> usersEventList = new UniqueList<>(usersNonUnique);
 
-		// create the issues table
+		// create the appointment table
 		AdvancedTableModel<Appointment> tableModel = eventTableModelWithThreadProxyList(
 												textFilteredIssues, new AppointmentTableFormat());
-		JTable issuesJTable = new JTable(tableModel);
-		TableComparatorChooser.install(issuesJTable, sortedAppointments, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE);
-		JScrollPane issuesTableScrollPane = new JScrollPane(issuesJTable);
+		this.appointmentsJTable = new JTable(tableModel);
+		TableComparatorChooser.install(appointmentsJTable, sortedAppointments, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE);
+		JScrollPane appointmentsTableScrollPane = new JScrollPane(appointmentsJTable);
 	
 		// create the users list
 		DefaultEventListModel<String> usersListModel = eventListModelWithThreadProxyList(usersEventList);
@@ -97,7 +99,7 @@ public class ScheduleAppointment extends JPanel implements TableFormat<Appointme
 		     GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
 		panel.add(usersListScrollPane,         new GridBagConstraints(0, 3, 1, 1, 0.15, 1.0,
 		      GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
-		panel.add(issuesTableScrollPane,       new GridBagConstraints(1, 0, 1, 4, 0.85, 1.0,
+		panel.add(appointmentsTableScrollPane,       new GridBagConstraints(1, 0, 1, 4, 0.85, 1.0,
 		      GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
 	
 		JButton refreshButton = new JButton("Refresh");
@@ -105,12 +107,21 @@ public class ScheduleAppointment extends JPanel implements TableFormat<Appointme
             @Override
             public void actionPerformed(ActionEvent e) {
             	handleLoadButton();
-//                loadAppointments(); // Call your loadAppointments method when the button is clicked
             }
         });
+        
+		JButton selectButton = new JButton("Select");
+		selectButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            	handleSelectButton();
+            }
+        });
+        
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         buttonPanel.add(refreshButton);
+        buttonPanel.add(selectButton);
 
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.add(panel, BorderLayout.CENTER);
@@ -157,6 +168,47 @@ public class ScheduleAppointment extends JPanel implements TableFormat<Appointme
 	    } catch (IOException e) {
 	        e.printStackTrace();
 	    }
+	}
+	public void handleSelectButton() {
+	    System.out.println("ScheduleAppointment: Select button pressed.");
+
+	    // Get the selected row index
+	    int selectedRowIndex = this.appointmentsJTable.getSelectedRow();
+
+	    if (selectedRowIndex != -1) { // Check if a row is selected
+	        // Get the appointment object from the selected row
+	        Appointment selectedAppointment = appointmentEventList.get(selectedRowIndex);
+
+	        // Extract the desired fields from the selected appointment
+	        String time = selectedAppointment.getTime();
+	        String date = selectedAppointment.getDate();
+	        String appointmentType = selectedAppointment.getAppointmentType();
+	        String who = selectedAppointment.getWho();
+	        String notes = selectedAppointment.getNotes();
+	        String shortDescription = selectedAppointment.getShortDescription();
+
+	        // Print the extracted appointment fields
+	        System.out.println("Selected Appointment:");
+	        System.out.println("Time: " + time);
+	        System.out.println("Date: " + date);
+	        System.out.println("Appointment Type: " + appointmentType);
+	        System.out.println("Who: " + who);
+	        System.out.println("Notes: " + notes);
+	        System.out.println("Short Description: " + shortDescription);
+
+	        // Add the appointment data to MyAppointments panel
+	        String[] rowData = {time, date, appointmentType, who, notes, shortDescription};
+	        ((MainFrame) SwingUtilities.getWindowAncestor(this)).getMyAppointmentsPanel().addAppointment(rowData);
+	    } else {
+	        System.out.println("No appointment selected.");
+	    }
+	}
+
+	
+
+
+	public JTable getAppointmentsJTable() {
+		return appointmentsJTable;
 	}
 
 	@Override

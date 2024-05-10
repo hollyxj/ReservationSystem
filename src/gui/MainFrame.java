@@ -43,6 +43,11 @@ public class MainFrame extends JFrame {
     private Welcome welcomePage;
     private ScheduleAppointment schedulePage;
     private EditAvailability editAvailPage;
+    private MyAppointments myAppointmentsPage;
+
+    
+	private String signedInName;
+	private ScheduleAppointment scheduleAppointmentPanel;
     
     // TM:   ™
     public MainFrame() {
@@ -56,6 +61,7 @@ public class MainFrame extends JFrame {
         this.welcomePage = new Welcome();
         this.schedulePage = new ScheduleAppointment();
         this.editAvailPage = new EditAvailability();
+        this.myAppointmentsPage = new MyAppointments();
 
         // Initialize the Sign In page as the initial view
         setContentPane(this.welcomePage);
@@ -65,6 +71,7 @@ public class MainFrame extends JFrame {
         JMenuItem signUpItem = new JMenuItem("Sign Up");
         JMenuItem signInItem = new JMenuItem("Log In");
         JMenuItem scheduleItem = new JMenuItem("Schedule Appointment");
+        JMenuItem myAppointmentsItem = new JMenuItem("My Appointments");
         JMenuItem editItem = new JMenuItem("Edit Availability");
         JMenuItem exitItem = new JMenuItem("Exit");
 
@@ -96,6 +103,14 @@ public class MainFrame extends JFrame {
         	this.editAvailPage.setSavedState((JPanel) getContentPane());
 
         });
+        
+        
+        myAppointmentsItem.addActionListener(e -> {
+        	// Schedule appointment page
+        	switchToMyAppointments();
+        	this.myAppointmentsPage.setSavedState((JPanel) getContentPane());
+
+        });
         exitItem.addActionListener(e -> System.exit(0)); // Exit the application
         
         
@@ -106,6 +121,7 @@ public class MainFrame extends JFrame {
         menu.add(signUpItem);
         menu.add(signInItem);
         menu.add(scheduleItem);
+        menu.add(myAppointmentsItem);
         menu.add(editItem);
         menu.addSeparator();
         menu.add(exitItem);
@@ -153,6 +169,14 @@ public class MainFrame extends JFrame {
 		});
     }
     
+    public void setName(String name) {
+    	this.signedInName = name;
+    }
+    
+    public String getName() {
+    	return this.signedInName;
+    }
+    
     private void switchToSignIn() {
         setContentPane(this.logInPage.getSavedState());
         validate();
@@ -183,6 +207,50 @@ public class MainFrame extends JFrame {
         repaint();
     }
     
+    public MyAppointments getMyAppointmentsPanel() {
+        return myAppointmentsPage;
+    }
+//    
+//	public void switchToMyAppointments() {
+//        setContentPane(this.myAppointmentsPage.getSavedState()); // Switch to MyAppointments panel
+//        validate();
+//        repaint();
+//    }
+//    public void switchToMyAppointments() {
+//        MyAppointments myAppointmentsPanel = (MyAppointments) this.myAppointmentsPage.getSavedState();
+//        myAppointmentsPanel.loadAppointmentsFromSchedule(myAppoi.getAppointmentEventList());
+//        setContentPane(myAppointmentsPanel); // Switch to MyAppointments panel
+//        validate();
+//        repaint();
+//    }
+    
+    public void switchToMyAppointments() {
+        // Get the content pane
+        Container contentPane = getContentPane();
+
+        // Check if the content pane is an instance of MyAppointments
+        if (contentPane instanceof MyAppointments) {
+            // If already on MyAppointments panel, do nothing
+            return;
+        }
+
+        // Check if the saved state is an instance of MyAppointments
+        if (this.myAppointmentsPage.getSavedState() instanceof MyAppointments) {
+            // Set the content pane to the saved state (MyAppointments panel)
+            setContentPane(this.myAppointmentsPage.getSavedState());
+            validate();
+            repaint();
+        } else {
+            // If saved state is not MyAppointments, create a new instance and switch
+            MyAppointments myAppointmentsPanel = new MyAppointments();
+            myAppointmentsPanel.setSavedState((JPanel) contentPane);
+            setContentPane(myAppointmentsPanel);
+            validate();
+            repaint();
+        }
+    }
+
+
     public void switchTo(String page) {
     	
     	switch(page) {
@@ -200,4 +268,9 @@ public class MainFrame extends JFrame {
 
     	MainFrame mf = new MainFrame();
     }
+
+
+	
+
+
 }
