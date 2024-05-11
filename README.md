@@ -3,7 +3,7 @@
 ## About the project
 [Demonstration video](https://www.youtube.com/watch?v=FDCWMALnxvs)
 
-[Presentation](https://www.canva.com/design/DAGE29Krxo4/q4s7cZtmF9YHT1_SYvy7Ew/editutm_content=DAGE29Krxo4&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
+[Presentation](https://www.canva.com/design/DAGE29Krxo4/q4s7cZtmF9YHT1_SYvy7Ew/edit?utm_content=DAGE29Krxo4&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
 
 ## How to Run
 
