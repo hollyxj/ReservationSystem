@@ -14,5 +14,6 @@ git clone https://github.com/hollyxj/ReservationSystem.git
 ```
 
 Open in Eclipse
-Navigate to "run" > "run.java"
-Run the "run.java" file to run 1 instance of the server and one instance of the GUI
+Navigate to "src" > "run" > "run.java"
+Run the "run.java" file 
+This will create 1 instance of the server and one instance of the GUI
