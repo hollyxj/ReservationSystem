@@ -1,5 +1,9 @@
 # Rezerve™: A Java Reservation System
 
+## About the project
+[Demonstration video](https://www.youtube.com/watch?v=FDCWMALnxvs)
+
+[Presentation](https://www.canva.com/design/DAGE29Krxo4/q4s7cZtmF9YHT1_SYvy7Ew/editutm_content=DAGE29Krxo4&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
 
 ## How to Run
 
@@ -8,27 +12,7 @@ Clone the GitHub Repository
 ```
 git clone https://github.com/hollyxj/ReservationSystem.git
 ```
-Navigate to the project directory
-```
-cd ReservationSystem
-```
 
-### Run 1 instance of a server, 1 instance of a GUI
-```
-cd src/run
-javac run.java
-java --add-opens java.base/java.time=ALL-UNNAMED run
-```
-
-### Run a server instance
-```
-cd ReservationSystem/src/server
-javac MainFrame.java
-java --add-opens java.base/java.time=ALL-UNNAMED MainFrame
-```
-### Run a GUI instance
-```
-cd ReservationSystem/src/gui
-javac RezServer.java
-java --add-opens java.base/java.time=ALL-UNNAMED RezServer
-```
+Open in Eclipse
+Navigate to "run" > "run.java"
+Run the "run.java" file to run 1 instance of the server and one instance of the GUI
